@@ -1,0 +1,34 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// Create a new database.
+use('monchi');
+
+
+// The prototype form to create a collection:
+
+
+db.restaurants.insertOne({
+    name : 'Pujol',
+    review : 'El restaurante nos sorprendi\u00f3 con su comida deliciosamente sabrosa, especialmente sus exquisitos chilaquiles, dejando una impresi\u00f3n positiva en nuestras paladar. A pesar de esto, el servicio dej\u00f3 mucho que desear, ya que fue lento y, en momentos, grosero, lo cual afect\u00f3 negativamente nuestra experiencia en general. Sin embargo, la decoraci\u00f3n del lugar es encantadora y logra crear un ambiente agradable. Los precios son justos, teniendo en cuenta las generosas porciones abundantes que ofrecen. En resumen, este restaurante es ideal si buscas deleitar tu paladar con platillos deliciosos y a precios razonables, pero ten en cuenta que el servicio podr\u00eda mejorar.',
+    data : {
+        comida : {
+            sabrosa : 54,
+            deliciosa : 78
+        }, 
+        lugar : {
+            recomendable : 54,
+            limpio : 4
+        },
+        servicio : {
+            lento : 45,
+            grosero : 14,
+            bueno : 3
+        }
+    },
+    id_google : 'dkjashd',
+    id_yelp : 'kdshlkajdsa'
+});
+
+// More information on the `createCollection` command can be found at:
+// https://www.mongodb.com/docs/manual/reference/method/db.createCollection/

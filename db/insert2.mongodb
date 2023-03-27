@@ -1,0 +1,22 @@
+use('monchi')
+db.restaurants.insertOne({
+    name : 'taqueria-el-turix',
+    review : 'El restaurante ofrece unos tacos ricos y deliciosos que dejan una impresión positiva en el paladar. El servicio es atento y amable, asegurando una experiencia agradable. Además, la decoración bonita y atractiva crea un ambiente acogedor. Sin embargo, hay algunos aspectos negativos a considerar. Los baños sucios pueden afectar la higiene general del lugar y la comodidad de los clientes. A pesar de las proporciones abundantes en cada plato, los precios altos pueden ser un factor disuasorio para algunos comensales. Además, el lugar suele estar llenísimo y con frecuencia se hace difícil encontrar un lugar para sentarse, lo cual puede hacer que la velada se torne incómoda. En general, el restaurante ofrece comida deliciosa y un servicio cordial, pero aspectos como la limpieza, los precios y la disponibilidad de asientos deben mejorar para proporcionar una experiencia excepcional a sus visitantes.',
+    data : {
+        comida : {
+            sabrosa : 54,
+            deliciosa : 78
+        }, 
+        lugar : {
+            recomendable : 54,
+            limpio : 4
+        },
+        servicio : {
+            lento : 45,
+            grosero : 14,
+            bueno : 3
+        }
+    },
+    id_google : 'dkjashd',
+    id_yelp : 'kdshlkajdsa'
+});
