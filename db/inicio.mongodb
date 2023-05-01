@@ -27,7 +27,8 @@ db.restaurants.insertOne({
         }
     },
     id_google : 'dkjashd',
-    id_yelp : 'kdshlkajdsa'
+    id_yelp : 'kdshlkajdsa', 
+    last_updated: new Date()
 });
 
 // More information on the `createCollection` command can be found at:

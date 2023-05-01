@@ -1,0 +1,33 @@
+{% extends './base.html' %} 
+{% block title %}
+Actualizar Restaurante
+{% endblock %}
+{% block body %}
+{% include './nav.html' %}
+<div class="container mt-4">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Ultima actualización</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for restaurant in restaurants %}
+            <tr>
+                <td>{{restaurant.name}}</td>
+                <td>{{restaurant.last_updated}}</td>
+                <td>
+                    <a href="/restaurants/{{restaurant.id}}/edit" class="btn btn-primary">Editar</a>
+                    <form action="/restaurants/{{restaurant.id}}" method="POST" style="display: inline-block">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button class="btn btn-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

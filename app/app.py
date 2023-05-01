@@ -5,9 +5,9 @@ import googlemaps
 from models.ModelRestaurant import ModelRestaurant
 
 app = Flask(__name__)
-
+#QKy3NzXLu2k3l1XD
 # Replace the following values with your MongoDB Atlas connection string
-MONGODB_CONNECTION_STRING = "mongodb://root:root123@localhost:27017/?authSource=admin&readPreference=primary&ssl=false&directConnection=true"
+MONGODB_CONNECTION_STRING = "mongodb+srv://monchi:QKy3NzXLu2k3l1XD@restaurants.svwsl9k.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(MONGODB_CONNECTION_STRING)
 db = client['monchi']
 @app.route('/restaurants/<restaurant_name>')
@@ -35,6 +35,11 @@ def get_review(place_id):
     # Return the review text as a JSON response
     return jsonify({'reviews': reviews})
 
+
+@app.route('/admin/restaurants', methods=['GET'])
+def update_restaurants():
+    restaurants = ModelRestaurant.find_all(db)
+    return render_template("update_restaurants.html", restaurants = restaurants)
 
 if __name__ == "__main__":
     app.run(debug=True)

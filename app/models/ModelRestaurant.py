@@ -12,3 +12,14 @@ class ModelRestaurant():
                 return None
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def find_all(self, db):
+        try:
+            result = db['restaurants'].find()
+            restaurants = []
+            for restaurant in result:
+                restaurants.append(Restaurant(**restaurant))
+            return restaurants
+        except Exception as ex:
+            raise Exception(ex)
