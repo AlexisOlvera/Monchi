@@ -41,5 +41,9 @@ def update_restaurants():
     restaurants = ModelRestaurant.find_all(db)
     return render_template("update_restaurants.html", restaurants = restaurants)
 
+@app.route('/admin/new_restaurant', methods=['GET'])
+def new_restaurant():
+    return render_template("new_restaurant.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

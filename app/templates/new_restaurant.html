@@ -1,0 +1,59 @@
+{% extends './base.html' %} 
+{% block title %}
+Buscar  restaurante
+{% endblock %}
+{% block customCSS %}
+<style>
+    #map {
+        height: 400px; /* The height is 400 pixels */
+        width: 100%; /* The width is the width of the web page */
+    }
+
+</style>
+{% endblock %}
+{% block body %}
+{% include './nav.html' %}
+
+<div class="container mt-4">
+    <form class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="name_restaurant">Restaurante</label>
+            <input type="text" class="form-control" id="name_restaurant" placeholder="CDMX" aria-describedby="button_find">
+            <button class="btn btn-outline-success" type="button" id="find_restaurant">Buscar</button>
+        </div>
+    </form>
+    <!--
+      The `defer` attribute causes the callback to execute after the full HTML
+      document has been parsed. For non-blocking uses, avoiding race conditions,
+      and consistent behavior across browsers, consider loading using Promises
+      with https://www.npmjs.com/package/@googlemaps/js-api-loader.
+      -->
+    <form class="row g-3 align-items-center">
+
+        <div class="col-auto">
+            <label for="name">Nombre</label>
+            <input type="text" class="form-control" id="name" aria-describedby="button_find" disabled readonly>
+        </div>
+        <div class="col-auto">
+            <label for="id_google">ID Google</label>
+            <input type="text" class="form-control" id="id_google" aria-describedby="button_find" disabled readonly>
+        </div>
+        <div class="col-auto">
+            <label for="id_yelp">ID Yelp</label>
+            <input type="text" class="form-control" id="id_yelp" aria-describedby="button_find" disabled readonly>
+        </div>
+    </form>
+    <div id="map"></div>
+</div>
+
+{% endblock %}
+
+
+{% block customJS %}
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ&callback=initMap&libraries=places&v=weekly"
+defer
+></script>
+
+<script src="../static/js/new_restaurant.js"></script>
+{% endblock %}
