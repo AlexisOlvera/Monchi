@@ -6,6 +6,9 @@ let service;
 let infowindow;
 
 const id_google_field = document.getElementById('id_google');
+const name_restaurant_field = document.getElementById('name');
+const id_yelp_field = document.getElementById('id_yelp');
+const name_to_find = document.getElementById('name_restaurant');
 
 function initMap() {
     //@19.4234126,-99.1440656,12z
@@ -20,7 +23,7 @@ function initMap() {
 
 function findRestaurant() {
     const request = {
-        query: document.getElementById('name_restaurant').value,
+        query: name_to_find.value,
         bounds: map.getBounds(),
         type: ['restaurant']
     };
@@ -37,6 +40,29 @@ function findRestaurant() {
     });
 }
 
+
+function findInYelp(name, lattitude, longitude){
+    const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
+    console.log(name, lattitude, longitude);
+    const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer cqmtvw0bP7pf3ARZhZkD6QTXTIpwi8v2-dyil2BcbSzywQZEqOxEXzeiBDmhXYbJeJq7vBT8n-eNiKFq9yypOtcaG6MIjzPsZnkAvCXJyb0QVKM0rMRKOYHw9ipgY3Yx'
+        }
+      };
+      //return the id of the restaurant or null 
+      fetch(corsAnywhereUrl + `https://api.yelp.com/v3/businesses/search?location=CDMX&latitude=${lattitude}&longitude=${longitude}&term=${name}&radius=10&categories=restaurants&sort_by=best_match&limit=20`, options)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response);
+            if (response.businesses.length > 0){
+                id_yelp_field.value = response.businesses[0].id;
+            }
+        })
+        .catch(err => console.error(err));
+}
+
 function createMarker(place) {
   if (!place.geometry || !place.geometry.location) return;
 
@@ -49,6 +75,8 @@ function createMarker(place) {
     infowindow.setContent(place.name || "");
     infowindow.open(map);
     id_google_field.value = place.place_id;
+    name_restaurant_field.value = place.name;
+    findInYelp(name_to_find.value , place.geometry.location.lat(), place.geometry.location.lng());
   });
 }
 
