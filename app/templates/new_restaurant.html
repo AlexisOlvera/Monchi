@@ -19,8 +19,10 @@ Buscar  restaurante
         <div class="col-auto">
             <label for="name_restaurant">Restaurante</label>
             <input type="text" class="form-control" id="name_restaurant" placeholder="CDMX" aria-describedby="button_find">
-            <button class="btn btn-outline-success" type="button" id="find_restaurant">Buscar</button>
         </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-success" type="button" id="find_restaurant">Buscar</button>
+        </div>        
     </form>
     <!--
       The `defer` attribute causes the callback to execute after the full HTML
@@ -28,22 +30,23 @@ Buscar  restaurante
       and consistent behavior across browsers, consider loading using Promises
       with https://www.npmjs.com/package/@googlemaps/js-api-loader.
       -->
-    <form class="row g-3 align-items-center">
+    <form class="row g-3 align-items-center" action="/admin/save_restaurant" method="post">
 
         <div class="col-auto">
             <label for="name">Nombre</label>
-            <input type="text" class="form-control" id="name" aria-describedby="button_find" disabled readonly>
+            <input type="text" class="form-control" id="name" aria-describedby="button_find" name="name">
         </div>
         <div class="col-auto">
             <label for="id_google">ID Google</label>
-            <input type="text" class="form-control" id="id_google" aria-describedby="button_find" disabled readonly>
+            <input type="text" class="form-control" id="id_google" aria-describedby="button_find" name="id_google">
         </div>
         <div class="col-auto">
             <label for="id_yelp">ID Yelp</label>
-            <input type="text" class="form-control" id="id_yelp" aria-describedby="button_find" disabled readonly>
+            <input type="text" class="form-control" id="id_yelp" aria-describedby="button_find" name="id_yelp">
         </div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
-    <div id="map"></div>
+    <div id="map" class="mt-4"></div>
 </div>
 
 {% endblock %}

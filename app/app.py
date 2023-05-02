@@ -45,5 +45,14 @@ def update_restaurants():
 def new_restaurant():
     return render_template("new_restaurant.html")
 
+
+@app.route('/admin/save_restaurant', methods=['POST'])
+def save_restaurant():
+    restaurant_name = request.form['name']
+    id_google = request.form['id_google']
+    id_yelp = request.form['id_yelp']
+    ModelRestaurant.save(db, restaurant_name, id_google, id_yelp)
+    return render_template("new_restaurant.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
