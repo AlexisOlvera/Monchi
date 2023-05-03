@@ -10,6 +10,11 @@ app = Flask(__name__)
 MONGODB_CONNECTION_STRING = "mongodb+srv://monchi:QKy3NzXLu2k3l1XD@restaurants.svwsl9k.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(MONGODB_CONNECTION_STRING)
 db = client['monchi']
+
+@app.route('/')
+def home():
+    return render_template("index.html")
+
 @app.route('/restaurants/<restaurant_name>')
 def index(restaurant_name):
     print(restaurant_name)
