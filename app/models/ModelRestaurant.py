@@ -55,3 +55,16 @@ class ModelRestaurant():
         except Exception as ex:
             raise Exception(ex) """
         
+    @classmethod
+    def delete(self, db, restaurant_name):
+        try:
+            db['restaurants'].delete_one({'name': {"$regex": restaurant_name, "$options": "i"}})
+        except Exception as ex:
+            raise Exception(ex)
+        
+    @classmethod
+    def update(self, db, restaurant_name, new_name):
+        try:
+            db['restaurants'].update_one({'name': {"$regex": restaurant_name, "$options": "i"}}, {"$set": {'name': new_name}})
+        except Exception as ex:
+            raise Exception(ex)
