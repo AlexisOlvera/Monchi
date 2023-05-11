@@ -2,6 +2,7 @@ import json
 from flask import Flask, jsonify, render_template, request
 from pymongo import MongoClient
 import googlemaps
+from utilities import utilities
 from models.ModelRestaurant import ModelRestaurant
 
 app = Flask(__name__)
@@ -19,9 +20,10 @@ def home():
 def index(restaurant_name):
     print(restaurant_name)
     restaurant = ModelRestaurant.find(db, restaurant_name)
+    labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
     print(restaurant)
     if restaurant != None:
-        return render_template("restaurant.html", restaurant = restaurant)
+        return render_template("restaurant.html", restaurant = restaurant, labels = labels, parents = parents, values = values)
     else:
         return render_template("index.html") # restaurant_not_found.hmtl"
     

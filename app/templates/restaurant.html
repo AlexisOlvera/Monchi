@@ -17,12 +17,16 @@ Monchi
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Mapa</button>
                   <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Reviews</button>
+                  <button class="nav-link" id="nav-charts-tab" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Gráficas</button>
                   <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Fotos</button>
                 </div>
               </nav>
               <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     <img src="https://maps.googleapis.com/maps/api/staticmap?center=19.4327103,-99.1963739&zoom=16&size=400x400&key=AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ">
+                </div>
+                <div class="tab-pane fade" id="nav-charts" role="tabpanel" aria-labelledby="nav-charts-tab">
+                  <div id="chartDiv"></div>
                 </div>
                 <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 </div>
@@ -53,4 +57,32 @@ Monchi
           </div>
         </div>
     </div>
+
+    {% block scripts %}
+<script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
+<script>
+    var data = [
+      {
+        "type": "sunburst",
+        "labels": {{labels | safe}},
+        "parents": {{parents | safe}},
+        "values":  {{values | safe}},
+        "leaf": {"opacity": 0.4},
+        "marker": {"line": {"width": 2}},
+        "branchvalues": 'total'
+      }];
+
+      var layout = {
+        "margin": {"l": 0, "r": 0, "b": 0, "t": 0},
+      };
+
+
+      Plotly.newPlot('chartDiv', data, layout, {showSendToCloud: true})
+
+      myPlot = document.getElementById("chartDiv");
+
+</script>
+{% endblock %}
+
 {% endblock %}  
+
