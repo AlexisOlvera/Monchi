@@ -1,4 +1,3 @@
-import visualize
 import gensim.models as models
 
 #LDA model training
@@ -9,8 +8,5 @@ def train(freq_list, id2word, sorted_aspects):
     lda_model = models.LdaModel(corpus=[freq_list], id2word=id2word, num_topics=num_topics, update_every=1, chunksize=10000, passes=1)
     # Print the most relevant topics
     relevant_topics = lda_model.print_topics(num_topics=1, num_words=5)
-    visualize.get_topics(relevant_topics)
-    doc_lda = lda_model[sorted_aspects]
-    print(doc_lda)
 
     return lda_model, relevant_topics

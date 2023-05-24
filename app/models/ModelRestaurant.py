@@ -29,6 +29,8 @@ class ModelRestaurant():
 
     @classmethod
     def save(self, db, name, id_google, id_yelp):
+        url_ngrok = "http://704e-35-237-221-155.ngrok-free.app"
+        url_colab = url_ngrok+"/api/predict"
         url = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=newest"
 
         headers = {
@@ -50,6 +52,10 @@ class ModelRestaurant():
             reviews_google.append(review['text'])
         print(reviews_yelp)
         print(reviews_google)
+        # TODO: mandarlas al colab que regrese los tripletes
+        # TODO: Clusterizar los tripletes
+        # TODO: Envíar al gpt-4
+        # TODO: Guardar en la base de datos
         """ try:
             db['restaurants'].insert_one({'name': name, 'id_google': id_google, 'id_yelp': id_yelp})
         except Exception as ex:

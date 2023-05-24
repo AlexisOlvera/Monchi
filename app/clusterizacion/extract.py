@@ -6,7 +6,7 @@ def aspects(pairs):
     
     return aspect_list
 
-def opinions(pairs):
+def extract_opinions(pairs):
     # List of words in second position: opinions
     opinion_list = []
     for pair in pairs:
