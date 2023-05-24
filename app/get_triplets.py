@@ -58,6 +58,11 @@ def get_relevant_triplets(phrase_pairs):
 
     topic_list = []
     for pair in trims:
-        topic_list.append(pair[1].replace('"', ""))
+        topic_list.append(pair[1].replace('"', "").rstrip())
 
-    return topic_list
+    relevant_pairs = []
+    for i, opinion in enumerate(pair_clusters[1]):
+        if pair_clusters[1][i][1] in topic_list:
+            relevant_pairs.append(pair_clusters[1][i])
+    
+    return relevant_pairs
