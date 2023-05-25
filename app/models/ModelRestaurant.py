@@ -1,3 +1,4 @@
+import datetime
 from .entities.Restaurant import Restaurant
 import requests
 import googlemaps
@@ -73,6 +74,17 @@ class ModelRestaurant():
         generate_review = utilities.generate_review(relevant_pairs)
         print(generate_review)
         # TODO: Guardar en la base de datos
+        try:
+            db['restaurants'].insert_one({
+                'name': name, 
+                'review': generate_review, 
+                'data': relevant_pairs,
+                'id_google': id_google, 
+                'id_yelp': id_yelp, 
+                'last_update': datetime.datetime.now()
+            })
+        except Exception as ex:
+            raise Exception(ex)
         """ try:
             db['restaurants'].insert_one({'name': name, 'id_google': id_google, 'id_yelp': id_yelp})
         except Exception as ex:
