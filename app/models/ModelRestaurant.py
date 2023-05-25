@@ -1,6 +1,7 @@
 from .entities.Restaurant import Restaurant
 import requests
 import googlemaps
+from utilities import utilities
 
 class ModelRestaurant():
     @classmethod
@@ -29,32 +30,48 @@ class ModelRestaurant():
 
     @classmethod
     def save(self, db, name, id_google, id_yelp):
-        url_ngrok = "http://704e-35-237-221-155.ngrok-free.app"
-        url_colab = url_ngrok+"/api/predict"
-        url = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=newest"
-
         headers = {
             "accept": "application/json",
             "Authorization": "Bearer cqmtvw0bP7pf3ARZhZkD6QTXTIpwi8v2-dyil2BcbSzywQZEqOxEXzeiBDmhXYbJeJq7vBT8n-eNiKFq9yypOtcaG6MIjzPsZnkAvCXJyb0QVKM0rMRKOYHw9ipgY3Yx"
         }
-
-        response = requests.get(url, headers=headers)
-        #make an list of reviews just with the text
+        #More relevant reviews from yelp
+        url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=yelp_sort"
+        response = requests.get(url_yelp, headers=headers)
         reviews_yelp = [{'review': review['text'], 'id_review': review['id']} for review in response.json()['reviews']]
-        
+        #More recent reviews from yelp
+        url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=newest"
+        response = requests.get(url_yelp, headers=headers)
+        reviews_yelp.extend([{'review': review['text'], 'id_review': review['id']} for review in response.json()['reviews']])
         api_key = 'AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ'
         gmaps = googlemaps.Client(key=api_key)
-        place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_newest')
 
-        # Extract the review text for each review in the response
-        reviews_google = []
-        for review in place['result']['reviews']:
-            reviews_google.append(review['text'])
+        #More relevant reviews from google
+        place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_relevant')
+        reviews_google = [{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']]
+        #More recent reviews from google
+        place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_newest')
+        reviews_google.extend([{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']])
         print(reviews_yelp)
         print(reviews_google)
-        # TODO: mandarlas al colab que regrese los tripletes
-        # TODO: Clusterizar los tripletes
-        # TODO: Envíar al gpt-4
+
+
+        #mandarlas al colab que regrese los tripletes
+        reviews_triplets = []
+        for review in reviews_yelp:
+            triplets = utilities.get_triplets(review['review'])
+            reviews_triplets.extend(triplets)
+        
+        for review in reviews_google:
+            triplets = utilities.get_triplets(review['review'])
+            reviews_triplets.extend(triplets)
+
+        print(reviews_triplets)
+        # Clusterizar los tripletes
+        relevant_pairs = utilities.get_relevant_pairs(reviews_triplets)
+        print(relevant_pairs)
+        # Envíar al gpt-4
+        generate_review = utilities.generate_review(relevant_pairs)
+        print(generate_review)
         # TODO: Guardar en la base de datos
         """ try:
             db['restaurants'].insert_one({'name': name, 'id_google': id_google, 'id_yelp': id_yelp})
