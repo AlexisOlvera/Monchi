@@ -21,7 +21,7 @@ class utilities:
 
     @staticmethod
     def get_triplets(review : str):
-        url_ngrok = "http://795c-35-197-129-71.ngrok-free.app"
+        url_ngrok = "http://977c-34-87-181-217.ngrok-free.app"
         url_colab = url_ngrok+f"/api/predict?review='{review}'"
         response = requests.get(url_colab)
         return response.json()
@@ -57,3 +57,16 @@ class utilities:
         )
         print(response['choices'][0]['message']['content'])
         return response['choices'][0]['message']['content']
+    
+    @staticmethod
+    def from_triplets_to_db(triplets : list) -> dict:
+        data = {}
+        for triplet in triplets:
+            aspect = triplet['aspect']
+            opinion = triplet['opinion']
+            if aspect not in data:
+                data[aspect] = {}
+            if opinion not in data[aspect]:
+                data[aspect][opinion] = 0
+            data[aspect][opinion] += 1
+        return data

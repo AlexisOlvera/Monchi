@@ -60,10 +60,22 @@ class ModelRestaurant():
         reviews_triplets = []
         for review in reviews_yelp:
             triplets = utilities.get_triplets(review['review'])
+            db['reviews_yelp'].insert_one({
+                'id_yelp': id_yelp,
+                'id_review': review['id_review'],
+                'review': review['review'],
+                'triplets': triplets
+            })
             reviews_triplets.extend(triplets)
         
         for review in reviews_google:
             triplets = utilities.get_triplets(review['review'])
+            db['reviews_google'].insert_one({
+                'id_google': id_google,
+                'id_review': review['id_review'],
+                'review': review['review'],
+                'triplets': triplets
+            })
             reviews_triplets.extend(triplets)
 
         print(reviews_triplets)
@@ -73,22 +85,17 @@ class ModelRestaurant():
         # Envíar al gpt-4
         generate_review = utilities.generate_review(relevant_pairs)
         print(generate_review)
-        # TODO: Guardar en la base de datos
         try:
             db['restaurants'].insert_one({
                 'name': name, 
                 'review': generate_review, 
-                'data': relevant_pairs,
+                'data': utilities.from_triplets_to_db(reviews_triplets),
                 'id_google': id_google, 
                 'id_yelp': id_yelp, 
-                'last_update': datetime.datetime.now()
+                'last_updated': datetime.datetime.now()
             })
         except Exception as ex:
             raise Exception(ex)
-        """ try:
-            db['restaurants'].insert_one({'name': name, 'id_google': id_google, 'id_yelp': id_yelp})
-        except Exception as ex:
-            raise Exception(ex) """
         
     @classmethod
     def delete(self, db, restaurant_name):
