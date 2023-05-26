@@ -52,7 +52,7 @@ function findInYelp(name, lattitude, longitude){
         }
       };
       //return the id of the restaurant or null 
-      fetch(corsAnywhereUrl + `https://api.yelp.com/v3/businesses/search?location=CDMX&latitude=${lattitude}&longitude=${longitude}&term=${name}&radius=10&categories=restaurants&sort_by=best_match&limit=20`, options)
+      fetch(corsAnywhereUrl + `https://api.yelp.com/v3/businesses/search?location=CDMX&latitude=${lattitude}&longitude=${longitude}&term=${name}&radius=30&categories=restaurants&sort_by=best_match&limit=20`, options)
         .then(response => response.json())
         .then(response => {
             console.log(response);
