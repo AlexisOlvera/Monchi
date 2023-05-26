@@ -20,12 +20,12 @@ def home():
 def index(restaurant_name):
     print(restaurant_name)
     restaurant = ModelRestaurant.find(db, restaurant_name)
-    labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
     print(restaurant)
     if restaurant != None:
+        labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
         return render_template("restaurant.html", restaurant = restaurant, labels = labels, parents = parents, values = values)
     else:
-        return render_template("index.html") # restaurant_not_found.hmtl"
+        return render_template("restaurant_not_found.html", restaurant_name = restaurant_name) # "
     
 
 @app.route('/get_review/<place_id>')
@@ -68,6 +68,20 @@ def update_list_fuse():
         file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
     return jsonify({'status': 'ok'})
 
+@app.route('/restaurants/request', methods=['POST'])
+def request_restaurants():
+    restaurant_name = request.args.get('restaurant_name')
+    result = ModelRestaurant.new_request(db, restaurant_name)
+    if  result == True:
+        return jsonify({'status': 'ok'})
+    else:    
+        return jsonify({'status': 'error'})
+    
+@app.route('/admin/update_reviews/<_id>', methods=['GET'])
+def update_reviews(_id):
+    return {'status': 'ok'}
+
+    
 
 
 if __name__ == "__main__":
