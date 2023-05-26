@@ -136,13 +136,6 @@ class ModelRestaurant():
             raise Exception(ex)
         
     @classmethod
-    def new_request(self, db, restaurant_name):
-        try:
-            db['request'].insert_one({'name': restaurant_name, 'date': datetime.datetime.now()})
-        except Exception as ex:
-            raise Exception(ex)
-        
-    @classmethod
     def update_reviews(self, db, _id):
         try:
             if db['restaurants'].find_one({'_id': _id}) == None:

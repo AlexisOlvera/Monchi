@@ -16,13 +16,9 @@ Center the image
     <p class="text-center">Lo sentimos por el momento no tenemos la reseña generada para el restaurante buscado.
         Puedes hacer la solicitud apretando el siguiente botón </p>
     <div class="d-grid gap-2 col-6 mx-auto">
-        <button class="btn btn-outline-success" type="button" id="solicitar">Solicitar</button>
+        <a href="/restaurants/request?restaurant_name={{restaurant_name}}" class="btn btn-primary">Solicitar reseña</a>
     </div>
-    <div id="name_restaurant" style="display: none;">{{restaurant_name}}</div>
 </div>
 
-{% block customJS %}
-<script src="../static/js/restaurant_not_found.js"></script>
-{% endblock %}
 
 {% endblock %}

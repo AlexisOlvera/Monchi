@@ -1,9 +1,10 @@
 import json
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 from pymongo import MongoClient
 import googlemaps
 from utilities import utilities
 from models.ModelRestaurant import ModelRestaurant
+from models.ModelRequest import ModelRequest
 
 app = Flask(__name__)
 #QKy3NzXLu2k3l1XD
@@ -67,21 +68,22 @@ def update_list_fuse():
     with open('static/js/fuse_list.js', 'w+') as file:
         file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
     return jsonify({'status': 'ok'})
-
-@app.route('/restaurants/request', methods=['POST'])
-def request_restaurants():
-    restaurant_name = request.args.get('restaurant_name')
-    result = ModelRestaurant.new_request(db, restaurant_name)
-    if  result == True:
-        return jsonify({'status': 'ok'})
-    else:    
-        return jsonify({'status': 'error'})
     
 @app.route('/admin/update_reviews/<_id>', methods=['GET'])
 def update_reviews(_id):
     return {'status': 'ok'}
 
-    
+@app.route('/restaurants/request', methods=['POST', 'GET'])
+def request_restaurants():
+    restaurant_name = request.args.get('restaurant_name')
+    print(restaurant_name)
+    ModelRequest.new_request(db, restaurant_name)
+    return redirect('/')
+
+@app.route('/admin/requests', methods=['GET'])
+def requests():
+    requests = ModelRequest.find_requests(db)
+    return render_template("requests.html", requests = requests)
 
 
 if __name__ == "__main__":
