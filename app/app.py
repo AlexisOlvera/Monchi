@@ -61,5 +61,14 @@ def save_restaurant():
     ModelRestaurant.save(db, restaurant_name, id_google, id_yelp)
     return render_template("new_restaurant.html")
 
+@app.route('/admin/update_list_fuse', methods=['GET'])
+def update_list_fuse():
+    list_restaurants = db['restaurants'].distinct('name', {})
+    with open('static/js/fuse_list.js', 'w+') as file:
+        file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
+    return jsonify({'status': 'ok'})
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
