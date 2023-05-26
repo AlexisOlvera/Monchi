@@ -20,6 +20,7 @@ Actualizar Restaurante
                 <td>{{restaurant.last_updated}}</td>
                 <td>
                     <a href="/restaurants/{{restaurant.id}}/edit" class="btn btn-primary">Editar</a>
+                    <a href="/admin/update_reviews/{{restaurant.id}}" class="btn btn-success">Actualizar</a>
                     <form action="/restaurants/{{restaurant.id}}" method="POST" style="display: inline-block">
                         <input type="hidden" name="_method" value="DELETE">
                         <button class="btn btn-danger">Eliminar</button>
