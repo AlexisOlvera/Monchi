@@ -50,7 +50,7 @@ class ModelRestaurant():
         place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_relevant')
         reviews_google = [{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']]
         #More recent reviews from google
-        place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_newest')
+        place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='newest')
         reviews_google.extend([{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']])
         print(reviews_yelp)
         print(reviews_google)
@@ -59,6 +59,9 @@ class ModelRestaurant():
         #mandarlas al colab que regrese los tripletes
         reviews_triplets = []
         for review in reviews_yelp:
+            #Check if the review is in the database with the id_review and id_yelp
+            if db['reviews_yelp'].find_one({'id_yelp': id_yelp, 'id_review': review['id_review']}) != None:
+                continue
             triplets = utilities.get_triplets(review['review'])
             db['reviews_yelp'].insert_one({
                 'id_yelp': id_yelp,
@@ -69,6 +72,9 @@ class ModelRestaurant():
             reviews_triplets.extend(triplets)
         
         for review in reviews_google:
+            #Check if the review is in the database with the id_review and id_google
+            if db['reviews_google'].find_one({'id_google': id_google, 'id_review': review['id_review']}) != None:
+                continue
             triplets = utilities.get_triplets(review['review'])
             db['reviews_google'].insert_one({
                 'id_google': id_google,
