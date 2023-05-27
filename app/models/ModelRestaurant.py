@@ -44,11 +44,15 @@ class ModelRestaurant():
             #Check if the review is in the database with the id_review and id_yelp
             if db['reviews_yelp'].find_one({'id_yelp': id_yelp, 'id_review': review['id_review']}) != None:
                 continue
-            triplets = utilities.get_triplets(review['review'])
+            text_and_triplets = utilities.get_triplets(review['review'])
+            triplets = text_and_triplets['triplets']
+            text = text_and_triplets['review']
+            print(text)
+            print(triplets)
             db['reviews_yelp'].insert_one({
                 'id_yelp': id_yelp,
                 'id_review': review['id_review'],
-                'review': review['review'],
+                'review': text,
                 'triplets': triplets
             })
             reviews_triplets.extend(triplets)
@@ -57,11 +61,15 @@ class ModelRestaurant():
             #Check if the review is in the database with the id_review and id_google
             if db['reviews_google'].find_one({'id_google': id_google, 'id_review': review['id_review']}) != None:
                 continue
-            triplets = utilities.get_triplets(review['review'])
+            text_and_triplets = utilities.get_triplets(review['review'])
+            triplets = text_and_triplets['triplets']
+            text = text_and_triplets['review']
+            print(text)
+            print(triplets)
             db['reviews_google'].insert_one({
                 'id_google': id_google,
                 'id_review': review['id_review'],
-                'review': review['review'],
+                'review': text,
                 'triplets': triplets
             })
             reviews_triplets.extend(triplets)
@@ -95,24 +103,25 @@ class ModelRestaurant():
     @classmethod
     def save(self, db, name, id_google, id_yelp):
         #Obtener las reviews de google y yelp
-        reviews_yelp, reviews_google = self.get_reviews_from_google_yelp(id_google, id_yelp)
+        reviews_yelp, reviews_google = self.get_reviews_from_google_yelp(self = self, id_google = id_google, id_yelp = id_yelp, just_new = False)
         print(reviews_yelp)
         print(reviews_google)
 
         #mandarlas al colab que regrese los tripletes
-        reviews_triplets = self.get_triplets_from_colab(reviews_yelp, reviews_google, db, id_google, id_yelp)
+        reviews_triplets = self.get_triplets_from_colab(self, reviews_yelp, reviews_google, db, id_google, id_yelp)
 
+        print("reviews_triplets\n")
         print(reviews_triplets)
         # Clusterizar los tripletes
-        relevant_pairs = utilities.get_relevant_pairs(reviews_triplets)
-        print(relevant_pairs)
+        #relevant_pairs = utilities.get_relevant_pairs(reviews_triplets)
+        #print(relevant_pairs)
         # Envíar al gpt-4
-        generate_review = utilities.generate_review(relevant_pairs)
-        print(generate_review)
+        #generate_review = utilities.generate_review(relevant_pairs)
+        #print(generate_review)
         try:
             db['restaurants'].insert_one({
                 'name': name, 
-                'review': generate_review, 
+                'review': "Falta generar la review", 
                 'data': utilities.from_triplets_to_db(reviews_triplets),
                 'id_google': id_google, 
                 'id_yelp': id_yelp, 
