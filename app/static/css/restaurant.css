@@ -1,0 +1,12 @@
+.aspect {
+    background-color: #ffcc00;
+}
+
+.opinion {
+    background-color: #3399ff;
+}
+
+.highlight {
+    font-weight: bold;
+    text-decoration: underline;
+}

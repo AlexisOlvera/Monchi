@@ -168,3 +168,14 @@ class ModelRestaurant():
             )
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def get_reviews(self, db, id_google, id_yelp):
+        try:
+            reviews_yelp = db['reviews_yelp'].find({'id_yelp': id_yelp})
+            reviews_google = db['reviews_google'].find({'id_google': id_google})
+            #transform the cursor to a list and concat the lists
+            reviews = list(reviews_yelp) + list(reviews_google)
+            return reviews
+        except Exception as ex:
+            raise Exception(ex)

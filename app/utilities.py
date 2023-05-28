@@ -70,3 +70,31 @@ class utilities:
                 data[aspect][opinion] = 0
             data[aspect][opinion] += 1
         return data
+    
+    """
+    let triplets = [
+        [[4], [1, 2], 'POS'],
+        [[35, 36, 37], [38], 'POS'],
+        [[41, 42, 43, 44, 45], [48], 'POS'],
+        [[52], [51], 'POS'],
+        [[54], [58], 'POS'],
+        [[54], [61], 'POS']
+    ];
+    """
+    
+
+
+    @staticmethod
+    def from_db_to_triplets_js(reviews_db : dict) -> list:
+        reviews_triplets = []
+        #make fill_positions a lambda function with argument start_end_positions
+        fill_positions = lambda start_end_positions : [i for i in range(start_end_positions[0], start_end_positions[1]+1)]
+        for review_db in reviews_db:
+            triplets = []
+            for triplet_db in review_db['triplets']:
+                triplets.append([
+                    fill_positions(triplet_db['positions']['aspect']),
+                    fill_positions(triplet_db['positions']['opinion']),
+                    triplet_db['sentiment']])
+            reviews_triplets.append(dict(triplets=triplets, review=review_db['review']))
+        return reviews_triplets

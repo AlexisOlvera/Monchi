@@ -2,6 +2,10 @@
 {% block title %}
 Monchi
 {% endblock %}
+{% block customCSS %}
+<link rel="stylesheet" href="../static/css/restaurant.css">
+{% endblock %}
+
 {% block body %}
 {% include './nav.html' %}
     <div class="container mt-4">
@@ -48,18 +52,15 @@ Monchi
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-6">
-            <div id="reviews"></div>
-          </div>
-          <div class="col-6">
-            <div id="chartDiv"></div>
-          </div>  
+          <div class="col-12" id ="chartDiv"> </div>  
+          <div class="col-12" id ="reviewsDiv"> </div>
         </div>
     </div>
 
     {% block scripts %}
 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
 <script>
+    var reviews_triplets = {{reviews_triplets | safe}};
     var id_google = '{{restaurant.id_google}}';
     var id_yelp = '{{restaurant.id_yelp}}';
     var data = [
