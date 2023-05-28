@@ -66,7 +66,10 @@ def new_restaurant():
 def save_restaurant():
     restaurant_name = request.form['name']
     id_google = request.form['id_google']
-    id_yelp = request.form['id_yelp']
+    try: 
+        id_yelp = request.form['id_yelp']
+    except:
+        id_yelp = ''
     ModelRestaurant.save(db, restaurant_name, id_google, id_yelp)
     return render_template("new_restaurant.html")
 

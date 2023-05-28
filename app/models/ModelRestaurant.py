@@ -7,73 +7,91 @@ from utilities import utilities
 class ModelRestaurant():
 
     def get_reviews_from_google_yelp(self, id_google, id_yelp, just_new = False):
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer cqmtvw0bP7pf3ARZhZkD6QTXTIpwi8v2-dyil2BcbSzywQZEqOxEXzeiBDmhXYbJeJq7vBT8n-eNiKFq9yypOtcaG6MIjzPsZnkAvCXJyb0QVKM0rMRKOYHw9ipgY3Yx"
-        }
+        reviews_yelp = []
+        reviews_google = []
+        if id_yelp != '':    
+            headers = {
+                "accept": "application/json",
+                "Authorization": "Bearer cqmtvw0bP7pf3ARZhZkD6QTXTIpwi8v2-dyil2BcbSzywQZEqOxEXzeiBDmhXYbJeJq7vBT8n-eNiKFq9yypOtcaG6MIjzPsZnkAvCXJyb0QVKM0rMRKOYHw9ipgY3Yx"
+            }
 
-        #More recent reviews from yelp
-        url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=newest"
-        response = requests.get(url_yelp, headers=headers)
-        reviews_yelp = [{'review': review['text'], 'id_review': review['id']} for review in response.json()['reviews']]
-
-        #More relevant reviews from yelp
-        if just_new == False:
-            url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=yelp_sort"
+            #More recent reviews from yelp
+            url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=newest"
             response = requests.get(url_yelp, headers=headers)
-            reviews_yelp.extend([{'review': review['text'], 'id_review': review['id']} for review in response.json()['reviews']])
-        
+            for review in response.json()['reviews']:
+                if review['text'] == '':
+                    continue
+                reviews_yelp.append({'review': review['text'], 'id_review': review['id']})
+
+
+            #More relevant reviews from yelp
+            if just_new == False:
+                url_yelp = f"https://api.yelp.com/v3/businesses/{id_yelp}/reviews?locale=es_MX&limit=20&sort_by=yelp_sort"
+                response = requests.get(url_yelp, headers=headers)
+                for review in response.json()['reviews']:
+                    if review['text'] == '':
+                        continue
+                    reviews_yelp.append({'review': review['text'], 'id_review': review['id']})
+
         api_key = 'AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ'
         gmaps = googlemaps.Client(key=api_key)
 
         #More recent reviews from google
         place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='newest')
-        reviews_google = [{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']]
-        
+        for review in place['result']['reviews']:
+            if review['text'] == '':
+                continue
+            reviews_google.append({'review': review['text'], 'id_review': review['time']})
+
+
         if just_new == False:
             #More relevant reviews from google
             place = gmaps.place(id_google, language='es', reviews_no_translations=True, reviews_sort='most_relevant')
-            reviews_google.extend([{'review': review['text'], 'id_review': review['time']} for review in place['result']['reviews']])
-        
+            for review in place['result']['reviews']:
+                if review['text'] == '':
+                    continue
+                reviews_google.append({'review': review['text'], 'id_review': review['time']})
 
         return reviews_yelp, reviews_google
     
     def get_triplets_from_colab(self, reviews_yelp, reviews_google, db, id_google, id_yelp):
         reviews_triplets = []
-        for review in reviews_yelp:
-            #Check if the review is in the database with the id_review and id_yelp
-            if db['reviews_yelp'].find_one({'id_yelp': id_yelp, 'id_review': review['id_review']}) != None:
-                continue
-            text_and_triplets = utilities.get_triplets(review['review'])
-            triplets = text_and_triplets['triplets']
-            text = text_and_triplets['review']
-            print(text)
-            print(triplets)
-            db['reviews_yelp'].insert_one({
-                'id_yelp': id_yelp,
-                'id_review': review['id_review'],
-                'review': text,
-                'triplets': triplets
-            })
-            reviews_triplets.extend(triplets)
+        if reviews_yelp != []:
+            for review in reviews_yelp:
+                #Check if the review is in the database with the id_review and id_yelp
+                if db['reviews_yelp'].find_one({'id_yelp': id_yelp, 'id_review': review['id_review']}) != None:
+                    continue
+                text_and_triplets = utilities.get_triplets(review['review'])
+                triplets = text_and_triplets['triplets']
+                text = text_and_triplets['review']
+                print(text)
+                print(triplets)
+                db['reviews_yelp'].insert_one({
+                    'id_yelp': id_yelp,
+                    'id_review': review['id_review'],
+                    'review': text,
+                    'triplets': triplets
+                })
+                reviews_triplets.extend(triplets)
         
-        for review in reviews_google:
-            #Check if the review is in the database with the id_review and id_google
-            if db['reviews_google'].find_one({'id_google': id_google, 'id_review': review['id_review']}) != None:
-                continue
-            text_and_triplets = utilities.get_triplets(review['review'])
-            triplets = text_and_triplets['triplets']
-            text = text_and_triplets['review']
-            print(text)
-            print(triplets)
-            db['reviews_google'].insert_one({
-                'id_google': id_google,
-                'id_review': review['id_review'],
-                'review': text,
-                'triplets': triplets
-            })
-            reviews_triplets.extend(triplets)
-        
+        if reviews_google != []:
+            for review in reviews_google:
+                #Check if the review is in the database with the id_review and id_google
+                if db['reviews_google'].find_one({'id_google': id_google, 'id_review': review['id_review']}) != None:
+                    continue
+                text_and_triplets = utilities.get_triplets(review['review'])
+                triplets = text_and_triplets['triplets']
+                text = text_and_triplets['review']
+                print(text)
+                print(triplets)
+                db['reviews_google'].insert_one({
+                    'id_google': id_google,
+                    'id_review': review['id_review'],
+                    'review': text,
+                    'triplets': triplets
+                })
+                reviews_triplets.extend(triplets)
+            
         return reviews_triplets
 
     @classmethod
@@ -106,10 +124,11 @@ class ModelRestaurant():
         reviews_yelp, reviews_google = self.get_reviews_from_google_yelp(self = self, id_google = id_google, id_yelp = id_yelp, just_new = False)
         print(reviews_yelp)
         print(reviews_google)
-
+        0/0
         #mandarlas al colab que regrese los tripletes
         reviews_triplets = self.get_triplets_from_colab(self, reviews_yelp, reviews_google, db, id_google, id_yelp)
-
+        if reviews_triplets == []:
+            return
         print("reviews_triplets\n")
         print(reviews_triplets)
         # Clusterizar los tripletes
