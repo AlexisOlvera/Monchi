@@ -67,12 +67,48 @@ function addHoverEffect() {
     });
 }
 
+function setMultipleAttributesonElement(elem, elemAttributes) {
+    Object.keys(elemAttributes).forEach(attribute => {
+        elem.setAttribute(attribute, elemAttributes[attribute]);
+    });
+    
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log(reviews_triplets);
     const reviewsDiv = document.getElementById('reviewsDiv');
+    const reviewsList = document.getElementById('reviews-list-tab');
     reviews_triplets.forEach((review_triplet, index) => {
         // create a new div element with id = review + index
-        reviewsDiv.appendChild(document.createElement('div')).setAttribute('id', 'review' + index);
+        // <div class="tab-pane fade show active" id="reviewN" role="tabpanel" aria-labelledby="list-home-list">...</div>
+        //<div class="list-group" id="reviews-list-tab" role="tablist">
+        //<a class="list-group-item list-group-item-action active" id="list-reviewN-list" data-bs-toggle="list" href="#reviewN" role="tab" aria-controls="list-reviewN">Review n</a>
+        const element_a_Attributes = {
+            'class': 'list-group-item list-group-item-action ' + (index==0 ? 'active':''),
+            'id': 'list-review' + index + '-list',
+            'data-bs-toggle': 'list',
+            'href': '#review' + index,
+            'role': 'tab',
+            'aria-controls': 'list-review' + index
+        };
+
+        const element_div_Attributes = {
+            'class': 'tab-pane fade show '+ (index==0 ? 'active':''),
+            'id': 'review' + index,
+            'role': 'tabpanel',
+            'aria-labelledby': 'list-review' + index + '-list'
+        };
+
+        const element_a = document.createElement('a');
+        setMultipleAttributesonElement(element_a, element_a_Attributes);
+        element_a.innerHTML = 'Review ' + (index + 1);
+
+        const element_div = document.createElement('div');
+        setMultipleAttributesonElement(element_div, element_div_Attributes);
+
+        reviewsList.appendChild(element_a);
+        reviewsDiv.appendChild(element_div);
+        
         const reviewText = review_triplet.review;
         const triplets = review_triplet.triplets;
         add_reviews(reviewText, triplets, index);

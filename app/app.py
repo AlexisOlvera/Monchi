@@ -1,12 +1,14 @@
 import json
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from pymongo import MongoClient
 import googlemaps
 from utilities import utilities
 from models.ModelRestaurant import ModelRestaurant
 from models.ModelRequest import ModelRequest
+from models.ModelUser import ModelUser
 
 app = Flask(__name__)
+app.secret_key = 'super secret key'
 #QKy3NzXLu2k3l1XD
 # Replace the following values with your MongoDB Atlas connection string
 MONGODB_CONNECTION_STRING = "mongodb+srv://monchi:QKy3NzXLu2k3l1XD@restaurants.svwsl9k.mongodb.net/?retryWrites=true&w=majority"
@@ -54,16 +56,23 @@ def get_review(place_id):
 
 @app.route('/admin/restaurants', methods=['GET'])
 def update_restaurants():
+    if 'username' not in session:
+        return redirect('/admin/login')
     restaurants = ModelRestaurant.find_all(db)
     return render_template("update_restaurants.html", restaurants = restaurants)
 
 @app.route('/admin/new_restaurant', methods=['GET'])
 def new_restaurant():
-    return render_template("new_restaurant.html")
+    if 'username' in session:
+        return render_template("new_restaurant.html")
+    else:
+        return redirect('/')
 
 
 @app.route('/admin/save_restaurant', methods=['POST'])
 def save_restaurant():
+    if 'username' not in session:
+        return redirect('/admin/login')
     restaurant_name = request.form['name']
     id_google = request.form['id_google']
     try: 
@@ -77,6 +86,8 @@ def save_restaurant():
 
 @app.route('/admin/update_list_fuse', methods=['GET'])
 def update_list_fuse():
+    if 'username' not in session:
+        return redirect('/admin/login')
     list_restaurants = db['restaurants'].distinct('name', {})
     with open('static/js/fuse_list.js', 'w+') as file:
         file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
@@ -84,6 +95,8 @@ def update_list_fuse():
     
 @app.route('/admin/update_reviews/<_id>', methods=['GET'])
 def update_reviews(_id):
+    if 'username' not in session:
+        return redirect('/admin/login')
     return {'status': 'ok'}
 
 @app.route('/restaurants/request', methods=['POST', 'GET'])
@@ -95,8 +108,30 @@ def request_restaurants():
 
 @app.route('/admin/requests', methods=['GET'])
 def requests():
+    if 'username' not in session:
+        return redirect('/admin/login')
     requests = ModelRequest.find_requests(db)
     return render_template("requests.html", requests = requests)
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def login_page():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if ModelUser.authenticate(db, username, password):
+            session['username'] = username
+            return redirect('/admin/restaurants')
+        else:
+            return render_template("login.html")
+    return render_template("login.html")
+
+@app.route('/admin/logout')
+def logout():
+  # Remove the username from the session
+    if 'username' in session:
+        session.pop('username', None)
+    
+    return redirect('/login')
 
 
 if __name__ == "__main__":

@@ -1,0 +1,25 @@
+{% extends './base.html' %} 
+{% block title %}
+Login
+{% endblock %}
+{% block customCSS %}
+{% endblock %}
+{% block body %}
+{% include './nav.html' %}
+
+<div class="container mt-4">
+    <form class="row g-3 align-items-center" action="/admin/login" method="post">
+
+        <div class="col-auto">
+            <label for="username">Email</label>
+            <input type="text" class="form-control" id="username" aria-describedby="button_find" name="username">
+        </div>
+        <div class="col-auto">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" aria-describedby="button_find" name="password">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+{% endblock %}
