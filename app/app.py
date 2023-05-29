@@ -23,7 +23,7 @@ def index(restaurant_name):
     restaurant = ModelRestaurant.find(db, restaurant_name)
     print(restaurant)
     if restaurant != None:
-        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews(db, restaurant.id_google, restaurant.id_yelp))
+        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp))
         print(reviews_triplets)
         labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
         return render_template("restaurant.html", 
@@ -68,9 +68,11 @@ def save_restaurant():
     id_google = request.form['id_google']
     try: 
         id_yelp = request.form['id_yelp']
+        id_tripadvisor = request.form['id_tripadvisor']
     except:
         id_yelp = ''
-    ModelRestaurant.save(db, restaurant_name, id_google, id_yelp)
+        id_tripadvisor = ''
+    ModelRestaurant.save(db, restaurant_name, id_google, id_yelp, id_tripadvisor)
     return render_template("new_restaurant.html")
 
 @app.route('/admin/update_list_fuse', methods=['GET'])

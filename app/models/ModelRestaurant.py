@@ -6,9 +6,12 @@ from utilities import utilities
 
 class ModelRestaurant():
 
-    def get_reviews_from_google_yelp(self, id_google, id_yelp, just_new = False):
-        reviews_yelp = []
-        reviews_google = []
+    def get_reviews(self, id_google, id_yelp, id_tripadvisor, just_new = False):
+        reviews = dict(
+            yelp = [],
+            google = [],
+            tripadvisor = [],
+        )
         if id_yelp != '':    
             headers = {
                 "accept": "application/json",
@@ -21,7 +24,7 @@ class ModelRestaurant():
             for review in response.json()['reviews']:
                 if review['text'] == '':
                     continue
-                reviews_yelp.append({'review': review['text'], 'id_review': review['id']})
+                reviews['yelp'].append({'review': review['text'], 'id_review': review['id']})
 
 
             #More relevant reviews from yelp
@@ -31,7 +34,20 @@ class ModelRestaurant():
                 for review in response.json()['reviews']:
                     if review['text'] == '':
                         continue
-                    reviews_yelp.append({'review': review['text'], 'id_review': review['id']})
+                    reviews['yelp'].append({'review': review['text'], 'id_review': review['id']})
+        
+        if id_tripadvisor != '':
+            #More recent reviews from tripadvisor
+            url = f"https://api.content.tripadvisor.com/api/v1/location/{id_tripadvisor}/reviews?key=7A043312545D413990FDE799105F27BC&language=es_MX"
+
+            headers = {"accept": "application/json"}
+
+            response = requests.get(url, headers=headers)
+            for review in response.json()['data']:
+                if review['text'] == '':
+                    continue
+                print(review['text'])
+                reviews['tripadvisor'].append({'review': review['text'], 'id_review': review['id']})
 
         api_key = 'AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ'
         gmaps = googlemaps.Client(key=api_key)
@@ -41,7 +57,7 @@ class ModelRestaurant():
         for review in place['result']['reviews']:
             if review['text'] == '':
                 continue
-            reviews_google.append({'review': review['text'], 'id_review': review['time']})
+            reviews['google'].append({'review': review['text'], 'id_review': review['time']})
 
 
         if just_new == False:
@@ -50,48 +66,34 @@ class ModelRestaurant():
             for review in place['result']['reviews']:
                 if review['text'] == '':
                     continue
-                reviews_google.append({'review': review['text'], 'id_review': review['time']})
+                reviews['google'].append({'review': review['text'], 'id_review': review['time']})
 
-        return reviews_yelp, reviews_google
+        return reviews
     
-    def get_triplets_from_colab(self, reviews_yelp, reviews_google, db, id_google, id_yelp):
+    def get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor):
         reviews_triplets = []
-        if reviews_yelp != []:
-            for review in reviews_yelp:
-                #Check if the review is in the database with the id_review and id_yelp
-                if db['reviews_yelp'].find_one({'id_yelp': id_yelp, 'id_review': review['id_review']}) != None:
+
+        for service, reviews_by_service in reviews.items():
+            if reviews_by_service == []:
+                continue
+            for review in reviews_by_service:
+                id_restaurant = eval(f'id_{service}')
+                if db[f'reviews_{service}'].find_one({
+                        f'id_{service}': id_restaurant, 
+                        'id_review': review['id_review'] }) != None:
                     continue
                 text_and_triplets = utilities.get_triplets(review['review'])
                 triplets = text_and_triplets['triplets']
                 text = text_and_triplets['review']
                 print(text)
                 print(triplets)
-                db['reviews_yelp'].insert_one({
-                    'id_yelp': id_yelp,
+                db[f'reviews_{service}'].insert_one({
+                    f'id_{service}': id_restaurant,
                     'id_review': review['id_review'],
                     'review': text,
                     'triplets': triplets
                 })
-                reviews_triplets.extend(triplets)
-        
-        if reviews_google != []:
-            for review in reviews_google:
-                #Check if the review is in the database with the id_review and id_google
-                if db['reviews_google'].find_one({'id_google': id_google, 'id_review': review['id_review']}) != None:
-                    continue
-                text_and_triplets = utilities.get_triplets(review['review'])
-                triplets = text_and_triplets['triplets']
-                text = text_and_triplets['review']
-                print(text)
-                print(triplets)
-                db['reviews_google'].insert_one({
-                    'id_google': id_google,
-                    'id_review': review['id_review'],
-                    'review': text,
-                    'triplets': triplets
-                })
-                reviews_triplets.extend(triplets)
-            
+                reviews_triplets.extend(triplets)    
         return reviews_triplets
 
     @classmethod
@@ -119,14 +121,14 @@ class ModelRestaurant():
 
 
     @classmethod
-    def save(self, db, name, id_google, id_yelp):
+    def save(self, db, name, id_google, id_yelp, id_tripadvisor):
         #Obtener las reviews de google y yelp
-        reviews_yelp, reviews_google = self.get_reviews_from_google_yelp(self = self, id_google = id_google, id_yelp = id_yelp, just_new = False)
-        print(reviews_yelp)
-        print(reviews_google)
-        0/0
+        reviews = self.get_reviews(self, id_google, id_yelp, id_tripadvisor)
+        for service, reviews_by_service in reviews.items():
+            print(service, '\n', '-'*50, '\n')
+            print(reviews_by_service)
         #mandarlas al colab que regrese los tripletes
-        reviews_triplets = self.get_triplets_from_colab(self, reviews_yelp, reviews_google, db, id_google, id_yelp)
+        reviews_triplets = self.get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor)
         if reviews_triplets == []:
             return
         print("reviews_triplets\n")
@@ -189,7 +191,7 @@ class ModelRestaurant():
             raise Exception(ex)
         
     @classmethod
-    def get_reviews(self, db, id_google, id_yelp):
+    def get_reviews_from_db(self, db, id_google, id_yelp):
         try:
             reviews_yelp = db['reviews_yelp'].find({'id_yelp': id_yelp})
             reviews_google = db['reviews_google'].find({'id_google': id_google})

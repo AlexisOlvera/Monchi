@@ -8,6 +8,7 @@ let infowindow;
 const id_google_field = document.getElementById('id_google');
 const name_restaurant_field = document.getElementById('name');
 const id_yelp_field = document.getElementById('id_yelp');
+const id_tripadvisor_field = document.getElementById('id_tripadvisor');
 const name_to_find = document.getElementById('name_restaurant');
 
 function initMap() {
@@ -63,6 +64,21 @@ function findInYelp(name, lattitude, longitude){
         .catch(err => console.error(err));
 }
 
+function findInTripAdvisor(name, lattitude, longitude){
+  const options = {method: 'GET', headers: {accept: 'application/json'}};
+  const API_KEY_TRIPADVISOR = '7A043312545D413990FDE799105F27BC';
+  const corsAnywhereUrl = 'https://cors-anywhere.herokuapp.com/';
+  fetch(corsAnywhereUrl + `https://api.content.tripadvisor.com/api/v1/location/search?key=${API_KEY_TRIPADVISOR}&searchQuery=${name}&category=restaurants&latLong=${lattitude}%2C%20-${longitude}&radius=100&radiusUnit=m&language=es`, options)
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      if (response.data.length > 0){
+        id_tripadvisor_field.value = response.data[0].location_id;
+      }
+    })
+    .catch(err => console.error(err));
+}
+
 function createMarker(place) {
   if (!place.geometry || !place.geometry.location) return;
 
@@ -77,6 +93,7 @@ function createMarker(place) {
     id_google_field.value = place.place_id;
     name_restaurant_field.value = place.name;
     findInYelp(name_to_find.value , place.geometry.location.lat(), place.geometry.location.lng());
+    findInTripAdvisor(name_to_find.value , place.geometry.location.lat(), place.geometry.location.lng());
   });
 }
 
