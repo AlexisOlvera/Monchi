@@ -8,20 +8,32 @@ Monchi
 
 {% block body %}
 {% include './nav.html' %}
+    <div class="m-4">_</div>
     <div class="container mt-5">
         <div class="row gy-2 gx-5 mt-5">
-          <div class="col-7">
+          <div class="col-8">
             <h1>{{restaurant.name}}</h1>
             <p style="text-align: justify">
               {{restaurant.review}}
-            </p>                
-            </div>
-          <div class="col-5">
+            </p>
+            <hr>
+            Esta reseña fue creada a partir de la información de <span id = "num_reviews"></span> reseñas.      
+          </div>
+          <div class="col-4">
+            <h3><span class="badge bg-danger">Pares mas relevantes</span></h3>
+            <ul class="list-group list-group-flush">
+              {% for relevan_pair  in restaurant.relevant_pairs %}
+              <li class="list-group-item">{{relevan_pair}}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div> 
+        <div class="row mt-4"  style="height: max-content;">
+          <div class="col-8" id ="chartDiv"> </div>  
+          <div class="col-4">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-map-tab-tab" data-bs-toggle="tab" data-bs-target="#nav-map-tab" type="button" role="tab" aria-controls="nav-map-tab" aria-selected="true">Mapa</button>
-                  <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Reviews</button>
-                  <button class="nav-link" id="nav-charts-tab" data-bs-toggle="tab" data-bs-target="#nav-charts" type="button" role="tab" aria-controls="nav-charts" aria-selected="false">Gráficas</button>
                   <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Fotos</button>
                 </div>
               </nav>
@@ -30,31 +42,27 @@ Monchi
                   <div id="map" class="mt-4"></div>  
                   <img src="https://maps.googleapis.com/maps/api/staticmap?center=19.4327103,-99.1963739&zoom=16&size=400x400&key=AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ">
                 </div>
-                <div class="tab-pane fade" id="nav-charts" role="tabpanel" aria-labelledby="nav-charts-tab">
-                </div>
-                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                </div>
                 <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                    <div id="carousel-div" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner" id = "photos_google">
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-div" data-bs-slide="prev">
-                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-div" data-bs-slide="next">
-                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                          <span class="visually-hidden">Next</span>
-                        </button>
-                      </div>
+                  <div id="carousel-div" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" id = "photos_google">
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-div" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-div" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
                 </div>
               </div>
           </div>
+            
         </div>
         <div class="row mt-4">
-          <div class="col-12" id ="chartDiv"> </div>  
-          <div class="col-12" id ="bubblePlot"> </div>
-          <div class="col-12" id ="indicatorPlot"> </div>
+          <div class="col-6" id ="bubblePlot"> </div>
+          <div class="col-6" id ="indicatorPlot"> </div>
         </div>
         <div class="row">
       <div class="col-4">
@@ -95,7 +103,8 @@ Monchi
       }];
 
       var layout = {
-        "margin": {"l": 0, "r": 0, "b": 0, "t": 0},
+        "margin": {"l": 0, "r": 0, "b": 0},
+        "title": "Todos los pares de aspectos y opiniones",
       };
 
 

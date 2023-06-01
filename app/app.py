@@ -84,7 +84,7 @@ def save_restaurant():
         id_yelp = ''
         id_tripadvisor = ''
     ModelRestaurant.save(db, restaurant_name, id_google, id_yelp, id_tripadvisor)
-    return render_template("new_restaurant.html")
+    return redirect('/admin/new_restaurant')
 
 @app.route('/admin/update_list_fuse', methods=['GET'])
 def update_list_fuse():

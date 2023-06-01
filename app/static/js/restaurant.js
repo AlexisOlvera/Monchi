@@ -79,6 +79,8 @@ function setMultipleAttributesonElement(elem, elemAttributes) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    const num_reviews = document.getElementById('num_reviews');
+    num_reviews.innerHTML = reviews_triplets.length;
     console.log('DOM loaded');
     initBubblePlot();
     initIndicatorPlot();

@@ -14,6 +14,7 @@ Buscar  restaurante
 {% block body %}
 {% include './nav.html' %}
 
+<div class="mt-4">_</div>
 <div class="container mt-5">
     <form class="row g-3 align-items-center">
         <div class="col-auto">
@@ -22,7 +23,7 @@ Buscar  restaurante
         </div>
         <div class="col-auto">
             <button class="btn btn-outline-success" type="button" id="find_restaurant">Buscar</button>
-        </div>        
+        </div>           
     </form>
     <!--
       The `defer` attribute causes the callback to execute after the full HTML
@@ -48,7 +49,7 @@ Buscar  restaurante
             <label for="id_tripadvisor">ID Tripadvisor</label>
             <input type="text" class="form-control" id="id_tripadvisor" aria-describedby="button_find" name="id_tripadvisor">
         </div>
-        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="submit" class="btn btn-primary" id="save">Guardar</button>   
     </form>
     <div id="map" class="mt-4"></div>
 </div>
