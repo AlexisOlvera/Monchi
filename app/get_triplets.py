@@ -3,7 +3,7 @@ from clusterizacion.BERT_encoding import encoding
 from clusterizacion.lda_training import train
 from clusterizacion.normalize import clean 
 from clusterizacion.visualize import print_to_vis
-from clusterizacion.extract import extract_opinions, tf
+from clusterizacion.extract import extract_opinions, tf, extract_aspects
 
 from sklearn.cluster import KMeans
 import gensim.corpora as corpora
@@ -34,7 +34,7 @@ def get_relevant_pairs(phrase_pairs):
         topic_list = []
         trims = []
         # Extract opinions
-        opinions = extract_opinions(cluster)
+        opinions = extract_aspects(cluster)
         # Create Dictionarys
         id2word_o = corpora.dictionary.Dictionary([opinions])
         # Frequency list: aspects
@@ -62,10 +62,16 @@ def get_relevant_pairs(phrase_pairs):
         for pair in trims:
             topic_list.append(pair[1].replace('"', "").rstrip())
 
-        relevant_pairs_per_cluster = []
-        for opinion in cluster:
-            if opinion[1] in topic_list:
-                relevant_pairs_per_cluster.append(opinion)
-        relevant_pairs.append(relevant_pairs_per_cluster)
+        #relevant_pairs_per_cluster = []
+
+        #for topic in topic_list:
+        #    for opinion in cluster:
+        #        if opinion[0] == topic:
+        #            relevant_pairs_per_cluster.append(opinion)
+        #            break
+
+        #relevant_pairs.append(relevant_pairs_per_cluster)
+
+        relevant_pairs.append(topic_list)
     
     return relevant_pairs

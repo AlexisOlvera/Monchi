@@ -1,8 +1,8 @@
-def aspects(pairs):
+def extract_aspects(pairs):
     # List of words in first position: aspects
     aspect_list = []
     for pair in pairs:
-        aspect_list.append(pair[0].lower())
+        aspect_list.append(pair[0].lower()+ " " + pair[1].lower())
     
     return aspect_list
 
