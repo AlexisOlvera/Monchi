@@ -1,15 +1,33 @@
-<nav class="navbar navbar-dark bg-dark">
-  <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-          <img src="{{url_for('static', filename='img/monchi.png')}}" alt="" width="40" height="40" class="d-inline-block align-text-top">
-          MONCHI
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-lg-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <h1>MONCHI<span>.</span></h1>
       </a>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a href="#hero">Restaurantes</a></li>
+          <li><a href="#about">¿Quiénes Somos?</a></li>
+          
+        </ul>
+        <!-- Bootstrap searchbar -->
+      </nav><!-- .navbar -->
       <form class="d-flex">
         <div class="position-relative">
-            <input class="form-control me-2" type="search" placeholder="Restaurante" aria-label="Search" id="find_field">
-            <div id="result_list" class="dropdown-menu"></div>
+          <input class="form-control me-2" type="search" placeholder="Restaurante" aria-label="Search" id="find_field">
+          <div id="result_list" class="dropdown-menu"></div>
         </div>
-          <button class="btn btn-outline-danger" id="buscar" type="button">Buscar</button>
+        <button class="btn btn-outline-danger" id="buscar" type="button">Buscar</button>
       </form>
-  </div>
-</nav>
+
+      <!-- <a class="btn-book-a-table" href="#book-a-table">Book a Table</a> -->
+      <i class="mobile-nav-toggle mobile-nav-show bi bi-list"></i>
+      <i class="mobile-nav-toggle mobile-nav-hide d-none bi bi-x"></i>
+
+    </div>
+  </header><!-- End Header -->

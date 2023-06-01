@@ -5,18 +5,108 @@ Monchi
 
 {% block body %}
 {% include './nav.html' %}
-<main class="form-signin w-100 m-auto">
-    <form method="post" action="">
-      <center class="align-items-center m-5">
-        <img class="mb-4" src="{{url_for('static', filename='img/monchi.png')}}" alt="" width="200">
-        <h1 class="h3 mb-3 fw-normal">MONCHI</h1>
+<main id="main">
 
-        <div class="form-floating">
-          <input type="text" class="form-control" id="floatingInput" placeholder="Nombre de restaurante" name="restaurant_name">
-          <label for="floatingInput">Restaurante</label>
+  <!-- ======= Breadcrumbs ======= -->
+  <div class="breadcrumbs">
+    <div class="container">
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Inicio</h2>
+        <!-- <ol>
+          <li><a href="index.html">Home</a></li>
+          <li>Sample Inner Page</li>
+        </ol> -->
+      </div>
+
+    </div>
+  </div><!-- End Breadcrumbs -->
+
+  <section class="sample-page">
+    <div class="container" data-aos="fade-up">
+      <div class="row">
+        <div class="col-lg-4 col-md-6 d-lg-block d-md-none d-sm-none">
+          <div class="image-container" style="background-image: url('../static/img/stats-bg.jpg');"></div>
         </div>
-        <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Buscar</button>
-      </center>
-    </form>
-  </main>
+        <div class="col-lg-4 col-md-6 d-lg-block d-md-none d-sm-none">
+          <div class="image-container" style="background-image: url('../static/img/logo.png');"></div>
+        </div>
+        <div class="col-lg-4 col-md-6 d-lg-block d-md-none d-sm-none">
+          <div class="image-container" style="background-image: url('../static/img/events-3.jpg');"></div>
+        </div>
+      </div>
+      <br>
+      <h1>Una reseña que lo dice <span style="text-decoration: underline; color: red;">todo</span></h1>
+      <p class="text-justify">MONCHI es tu mejor compañero para explorar restaurantes. </p>
+      <p class="text-justify">
+        Con el poder del aprendizaje automático, recompilamos miles de reseñas en una sola, única y completa.
+      </p>
+      <p class="text-justify">
+        Dile adiós a la sobrecarga de información y dale la bienvenida a una forma simple de tomar decisiones 
+        informadas sobre dónde comer. 
+        Ahorra tiempo y energía asegurándote de tener una visión completa del ambiente, servicio y calidad de 
+        un restaurante a través de una sola reseña cuidadosamente seleccionada. 
+      </p>
+      <h4>¡Permítenos ser tu guía para experiencias gastronómicas inolvidables!</h4>
+      <br>
+      <!-- long input "Ingresa el restaurante aquí" next to red button "Buscar restaurante" -->
+      <div class="row">
+        <div class="col-md-8">
+          <input type="text" class="form-control" placeholder="Ingresa el restaurante aquí">
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-danger">Buscar restaurante</button>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+</main><!-- End #main -->
+
+<!-- ======= Footer ======= -->
+<footer id="footer" class="footer">
+
+  <div class="container">
+    <div class="row gy-3">
+      
+      <div class="col-lg-3 col-md-6 d-flex">
+        <i class="bi bi-geo-alt icon"></i>
+        <div>
+          <h4>Dirección</h4>
+          <p>
+            Juarez 52 <br>
+            San Álvaro, Azcapotzalco, CDMX<br>
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 footer-links d-flex">
+        <i class="bi bi-telephone icon"></i>
+        <div>
+          <h4>Contacto</h4>
+          <p>
+            <strong>Phone:</strong> 55 6915 6299<br>
+            <strong>Email:</strong> monchi@gmail.com<br>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="copyright">
+      &copy; Copyright <strong><span>MONCHI</span></strong>. All Rights Reserved
+    </div>
+  </div>
+
+</footer><!-- End Footer -->
+<!-- End Footer -->
+
+<a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<div id="preloader"></div>
+{% block scripts %}
+<script src="../static/js/index.js"></script>
+{% endblock %}
 {% endblock %}
