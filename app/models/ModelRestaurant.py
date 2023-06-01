@@ -3,6 +3,7 @@ from .entities.Restaurant import Restaurant
 import requests
 import googlemaps
 from utilities import utilities
+from clusterizacion.BERT_encoding import enconde_list_of_sentences, redude_2d, encode_sentence
 
 class ModelRestaurant():
 
@@ -97,12 +98,100 @@ class ModelRestaurant():
         return reviews_triplets
 
     @classmethod
+    def get_reviews_from_db(self, db, id_google, id_yelp, id_tripadvisor):
+        try:
+            reviews_yelp = db['reviews_yelp'].find({'id_yelp': id_yelp})
+            reviews_google = db['reviews_google'].find({'id_google': id_google})
+            reviews_tripadvisor = db['reviews_tripadvisor'].find({'id_tripadvisor': id_tripadvisor})
+            #transform the cursor to a list and concat the lists
+            reviews = list(reviews_yelp) + list(reviews_google) + list(reviews_tripadvisor)
+            return reviews
+        except Exception as ex:
+            raise Exception(ex)
+    
+    @classmethod
+    def save_data_of_bubble_plot(self, db, restaurant: Restaurant):
+        reviews = self.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
+        aspects = utilities.get_aspects(reviews)
+        opinions = utilities.get_opinions(reviews) 
+        #make a dict with count of each aspect and other dict with count of each opinion
+
+        set_of_aspects = set(aspects)
+        set_of_opinions = set(opinions)
+        aspects_data = []
+        opinions_data = []
+        encoded_aspects = enconde_list_of_sentences([aspect for aspect in set_of_aspects])
+        encoded_opinions = enconde_list_of_sentences([opinion for opinion in set_of_opinions])
+        reduced_vector_aspects = redude_2d(encoded_aspects)
+        reduced_vector_opinions = redude_2d(encoded_opinions)
+        for index, aspect in enumerate(set_of_aspects):
+            aspects_data.append({
+                'aspect': aspect,
+                'x': reduced_vector_aspects[index][0],
+                'y': reduced_vector_aspects[index][1],
+                'size': aspects.count(aspect)
+            })
+
+        for index, opinion in enumerate(set_of_opinions):
+            opinions_data.append({
+                'opinion': opinion,
+                'x': reduced_vector_opinions[index][0],
+                'y': reduced_vector_opinions[index][1],
+                'size': opinions.count(opinion)
+            })
+
+        try:
+            db['data_of_bubble_plot'].insert_one({
+                'id_restaurant': restaurant._id,
+                'aspects': aspects_data,
+                'opinions': opinions_data
+            })
+        except Exception as ex:
+            raise Exception(ex)
+        
+        return {'status': 'ok'}
+
+    @classmethod
+    def get_data_of_bubble_plot(self, db, id_restaurant):
+        try:
+            data = db['data_of_bubble_plot'].find_one({'id_restaurant': id_restaurant})
+            if data == None:
+                return None
+            result = {}
+            x = []
+            y = []
+            size = []
+            text = []
+            for aspect in data['aspects']:
+                x.append(aspect['x'])
+                y.append(aspect['y'])
+                size.append(aspect['size'])
+                text.append(aspect['aspect'])
+            result['aspects'] = {'x': x, 'y': y, 'size': size, 'text': text}
+            x = []
+            y = []
+            size = []
+            text = []
+            for opinion in data['opinions']:
+                x.append(opinion['x'])
+                y.append(opinion['y'])
+                size.append(opinion['size'])
+                text.append(opinion['opinion'])
+            result['opinions'] = {'x': x, 'y': y, 'size': size, 'text': text}
+            return result
+        except Exception as ex:
+            raise Exception(ex)
+        
+
+    
+    @classmethod
     def find(self, db, restaurant_name):
         try:
             result = db['restaurants'].find_one({'name': {"$regex": restaurant_name, "$options": "i"}})
             print(result)
             if result != None:
-                return Restaurant(**result)
+                restaurant  = Restaurant(**result)
+                return restaurant
             else:
                 return None
         except Exception as ex:
@@ -128,26 +217,36 @@ class ModelRestaurant():
             print(service, '\n', '-'*50, '\n')
             print(reviews_by_service)
         #mandarlas al colab que regrese los tripletes
-        reviews_triplets = self.get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor)
-        if reviews_triplets == []:
-            return
+        if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
+            reviews_triplets = self.get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor)
         print("reviews_triplets\n")
         print(reviews_triplets)
+        reviews_triplets = self.get_reviews_from_db(db, id_google, id_yelp, id_tripadvisor)
+        triplets = []
+        for review_triplet in reviews_triplets:
+            triplets.extend(review_triplet['triplets'])
+
+        print(triplets)
         # Clusterizar los tripletes
-        #relevant_pairs = utilities.get_relevant_pairs(reviews_triplets)
-        #print(relevant_pairs)
+        relevant_pairs = utilities.get_relevant_pairs(triplets)
+        print(relevant_pairs)
         # Envíar al gpt-4
-        #generate_review = utilities.generate_review(relevant_pairs)
-        #print(generate_review)
+        generated_review = utilities.generate_review(relevant_pairs)
+        print(generated_review)
         try:
             db['restaurants'].insert_one({
                 'name': name, 
-                'review': "Falta generar la review", 
-                'data': utilities.from_triplets_to_db(reviews_triplets),
+                'review': generated_review, 
                 'id_google': id_google, 
                 'id_yelp': id_yelp, 
+                'id_tripadvisor': id_tripadvisor,
+                'data': utilities.from_triplets_to_db(triplets),
+                'relevant_pairs': relevant_pairs,
                 'last_updated': datetime.datetime.now()
             })
+            #find by id_google
+            resturant = Restaurant(**db['restaurants'].find_one({'id_google': id_google}))
+            self.save_data_of_bubble_plot(db, resturant)
         except Exception as ex:
             raise Exception(ex)
         
@@ -190,13 +289,6 @@ class ModelRestaurant():
         except Exception as ex:
             raise Exception(ex)
         
-    @classmethod
-    def get_reviews_from_db(self, db, id_google, id_yelp):
-        try:
-            reviews_yelp = db['reviews_yelp'].find({'id_yelp': id_yelp})
-            reviews_google = db['reviews_google'].find({'id_google': id_google})
-            #transform the cursor to a list and concat the lists
-            reviews = list(reviews_yelp) + list(reviews_google)
-            return reviews
-        except Exception as ex:
-            raise Exception(ex)
+    
+
+

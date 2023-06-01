@@ -21,7 +21,7 @@ class utilities:
 
     @staticmethod
     def get_triplets(review : str):
-        url_ngrok = "http://44c1-34-83-214-225.ngrok-free.app"
+        url_ngrok = "http://c34c-34-32-174-35.ngrok-free.app"
         url_colab = url_ngrok+f"/api/predict?review='{review}'"
         response = requests.get(url_colab)
         return response.json()
@@ -44,14 +44,34 @@ class utilities:
     def generate_review(relevant_pairs : list):
         openai.api_key = "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"
         promt = f"""
-        Escribe una reseña que incluya la siguiente lista de pares de aspectos y opiniones, es decir [aspecto, opinion], donde la opinion es un adjetivo que califica al aspecto:
+        Escribe una reseña para tu página que incluya la siguiente lista de pares de aspectos y opiniones, 
+        donde la opinion es un adjetivo que califica al aspecto, utiliza lenguaje claro para transmitir tu experiencia de forma casual.
+        A continuación los pares:
         {str(relevant_pairs)}
         """
         print(promt)
         response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
-                    {"role": "system", "content": "Eres un critico de restaurantes que escribe en un peridico de gran nombre, y que sus reseñas son de un maximo de 500 caracteres."},
+                    {"role": "system", "content": """
+                        Eres Monchi un critico de restaurantes, 
+                        y que sus reseñas son de un maximo de 1000 caracteres, cada reseña comienza con un titulo corto,
+                        que resume la experiencia general.
+                    """.strip().replace("\n", " ").replace("\t", " ")},
+                    {"role": "user", "content": """
+                        Escribe una reseña para tu página que incluya la siguiente lista de pares de aspectos y opiniones, es decir [aspecto, opinion], donde la opinion es un adjetivo que califica al aspecto, utiliza lenguaje claro para transmitir tu experiencia de forma casual.
+                        A continuación los pares:
+                        [['restaunte', 'bueno'], ['servicio', 'atento'], ['ambiente', 'agradable'], ['chilaquiles', 'deliciosos'], ['huevos rancheros', 'pesimos'], ['tacos dorados', 'buenos'], ['platillos', 'mal olor'], ['bebidas', 'deliciosas'], ['bebidas', 'caras']]
+                    """.strip().replace("\n", " ").replace("\t", " ")},
+                    {"role": "assistant", "content": """
+                        Una joya escondida con algunos contratiempos
+
+                        Encontré un restaurante bueno al que tenía ganas de probar. Puedo confirmar que el servicio fue atento durante toda nuestra visita, y el ambiente en general era agradable y cómodo. En cuanto a la comida, los chilaquiles se destacaron como una opción deliciosa y te los recomendaría a cualquiera. Sin embargo, los huevos rancheros dejaron mucho que desear y resultaron ser pésimos.
+
+                        Afortunadamente, los tacos dorados lograron compensar esa mala experiencia, y calificaría estos como buenos. A pesar de eso, hubo un detalle que no pude ignorar: algunos platillos tenían un mal olor que hacía cuestionar su calidad. Por otro lado, las bebidas en este lugar eran deliciosas, aunque también me parecieron algo caras.
+
+                        En resumen, este restaurante tiene un potencial increíble, pero es necesario prestar atención a ciertos detalles antes de que pueda ser considerado uno de los mejores de la ciudad. De momento, lo recomendaría con precaución y seleccionando muy bien lo que se decide pedir en el menú.
+                    """.strip().replace("\t", " ")}, 
                     {"role": "user", "content": promt}
                 ]
         )
@@ -98,3 +118,19 @@ class utilities:
                     triplet_db['sentiment']])
             reviews_triplets.append(dict(triplets=triplets, review=review_db['review']))
         return reviews_triplets
+    
+    @staticmethod
+    def get_aspects(reviews_triplets : list) -> list:
+        aspects = []
+        for review_triplets in reviews_triplets:
+            for triplet in review_triplets['triplets']:
+                aspects.append(triplet['aspect'])
+        return aspects
+    
+    @staticmethod
+    def get_opinions(reviews_triplets : list) -> list:
+        opinions = []
+        for review_triplets in reviews_triplets:
+            for triplet in review_triplets['triplets']:
+                opinions.append(triplet['opinion'])
+        return opinions

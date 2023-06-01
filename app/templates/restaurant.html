@@ -8,8 +8,8 @@ Monchi
 
 {% block body %}
 {% include './nav.html' %}
-    <div class="container mt-4">
-        <div class="row gy-2 gx-5">
+    <div class="container mt-5">
+        <div class="row gy-2 gx-5 mt-5">
           <div class="col-7">
             <h1>{{restaurant.name}}</h1>
             <p style="text-align: justify">
@@ -53,6 +53,8 @@ Monchi
         </div>
         <div class="row mt-4">
           <div class="col-12" id ="chartDiv"> </div>  
+          <div class="col-12" id ="bubblePlot"> </div>
+          <div class="col-12" id ="indicatorPlot"> </div>
         </div>
         <div class="row">
       <div class="col-4">
@@ -72,6 +74,15 @@ Monchi
     var reviews_triplets = {{reviews_triplets | safe}};
     var id_google = '{{restaurant.id_google}}';
     var id_yelp = '{{restaurant.id_yelp}}';
+    var id_trip = '{{restaurant.id_trip}}';
+    var x_aspects = {{bubble_data['aspects']['x'] | safe}};
+    var y_aspects = {{bubble_data['aspects']['y'] | safe}};
+    var size_aspects = {{(bubble_data['aspects']['size'])| safe}};
+    var text_aspects = {{bubble_data['aspects']['text'] | safe}};
+    var x_opinions = {{bubble_data['opinions']['x'] | safe}};
+    var y_opinions = {{bubble_data['opinions']['y'] | safe}};
+    var size_opinions = {{(bubble_data['opinions']['size']) | safe}};
+    var text_opinions = {{bubble_data['opinions']['text'] | safe}};
     var data = [
       {
         "type": "sunburst",

@@ -1,3 +1,7 @@
+var num_positivos = 0;
+var num_negativos = 0;
+
+
 function add_reviews(reviewText, triplets, index){
     console.log(triplets);
     document.getElementById('review' + index).innerHTML = highlightTriplets(reviewText, triplets);
@@ -75,6 +79,9 @@ function setMultipleAttributesonElement(elem, elemAttributes) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM loaded');
+    initBubblePlot();
+    initIndicatorPlot();
     console.log(reviews_triplets);
     const reviewsDiv = document.getElementById('reviewsDiv');
     const reviewsList = document.getElementById('reviews-list-tab');
@@ -149,3 +156,78 @@ function initMap() {
 
 
 window.initMap = initMap;
+
+function initBubblePlot(){
+    size_aspects = size_aspects.map(x => x * 10);
+    let trace_aspects = {
+        x: x_aspects,
+        y: y_aspects,
+        mode: 'markers',
+        marker: {
+            size: size_aspects
+        },
+        text: text_aspects
+    };
+    size_opinions = size_opinions.map(x => x * 10);
+    let trace_opinions = {
+        x: x_opinions,
+        y: y_opinions,
+        mode: 'markers',
+        marker: {
+            size: size_opinions
+        },
+        text: text_opinions
+    };
+
+
+    let data = [trace_aspects, trace_opinions];
+
+    let layout = {
+        title: 'Aspectos y opiniones',
+        showlegend: false,
+        height: 600,
+        width: 600
+    };
+
+    Plotly.newPlot('bubblePlot', data, layout);
+}
+
+function count_triplets_pos_neg(){
+    num_positivos = 0;
+    num_negativos = 0;
+    reviews_triplets.forEach(review_triplet => {
+        review_triplet.triplets.forEach(triplet => {
+            if(triplet[2] == 'POS'){
+                num_positivos++;
+            }else{
+                num_negativos++;
+            }
+        });
+    });
+    console.log(num_positivos);
+    console.log(num_negativos);
+}
+
+function initIndicatorPlot(){
+    count_triplets_pos_neg();
+    let data = [
+        {
+          type: "indicator",
+          domain: { x: [0, 1], y: [0, 1] },
+          title: 'Positivos vs Negativos',
+          value: num_positivos,
+          mode: "gauge+number+delta",
+          delta: { reference: num_positivos+num_negativos},
+          gauge: { axis: { visible: true, range: [0, num_positivos+num_negativos] } },
+          domain: { row: 0, column: 0 }
+        },
+    ];
+
+    let layout = {
+        showlegend: false,
+        height: 600,
+        width: 600
+    };
+
+    Plotly.newPlot('indicatorPlot', data, layout);
+}

@@ -25,15 +25,17 @@ def index(restaurant_name):
     restaurant = ModelRestaurant.find(db, restaurant_name)
     print(restaurant)
     if restaurant != None:
-        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp))
+        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor))
         print(reviews_triplets)
         labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
+        bubble_data = ModelRestaurant.get_data_of_bubble_plot(db, restaurant._id)
         return render_template("restaurant.html", 
                             restaurant = restaurant,
                             labels = labels,
                             parents = parents,
                             values = values,
-                            reviews_triplets = reviews_triplets
+                            reviews_triplets = reviews_triplets,
+                            bubble_data = bubble_data
                         )
     else:
         return render_template("restaurant_not_found.html", restaurant_name = restaurant_name)
