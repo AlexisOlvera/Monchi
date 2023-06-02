@@ -99,7 +99,8 @@ def update_list_fuse():
 def update_reviews(_id):
     if 'username' not in session:
         return redirect('/admin/login')
-    return {'status': 'ok'}
+    ModelRestaurant.update_reviews(db, _id)
+    redirect('/admin/restaurants')
 
 @app.route('/restaurants/request', methods=['POST', 'GET'])
 def request_restaurants():

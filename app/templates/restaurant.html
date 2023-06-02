@@ -75,8 +75,50 @@ Monchi
       </div>
     </div>
     </div>
+    <footer id="footer" class="footer mt-5">
+
+      <div class="container">
+        <div class="row gy-3">
+          
+          <div class="col-lg-3 col-md-6 d-flex">
+            <i class="bi bi-geo-alt icon"></i>
+            <div>
+              <h4>Dirección</h4>
+              <p>
+                Juarez 52 <br>
+                San Álvaro, Azcapotzalco, CDMX<br>
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-links d-flex">
+            <i class="bi bi-telephone icon"></i>
+            <div>
+              <h4>Contacto</h4>
+              <p>
+                <strong>Phone:</strong> 55 6915 6299<br>
+                <strong>Email:</strong> monchi@gmail.com<br>
+              </p>
+            </div>
+          </div>
+    
+        </div>
+      </div>
+    
+      <div class="container">
+        <div class="copyright">
+          &copy; Copyright <strong><span>MONCHI</span></strong>. All Rights Reserved
+        </div>
+      </div>
+    
+    </footer><!-- End Footer -->
+    <!-- End Footer -->
+    
+    <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    
+    <div id="preloader"></div>
 
     {% block scripts %}
+    <script src="../static/js/index.js"></script>
 <script src="https://cdn.plot.ly/plotly-2.20.0.min.js" charset="utf-8"></script>
 <script>
     var reviews_triplets = {{reviews_triplets | safe}};

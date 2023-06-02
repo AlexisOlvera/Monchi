@@ -226,7 +226,7 @@ class ModelRestaurant():
         for review_triplet in reviews_triplets:
             triplets.extend(review_triplet['triplets'])
 
-        print(triplets)
+        #print(triplets)
         # Clusterizar los tripletes
         relevant_pairs = utilities.get_relevant_pairs(triplets)
         print(relevant_pairs)
@@ -267,24 +267,26 @@ class ModelRestaurant():
     @classmethod
     def update_reviews(self, db, _id):
         try:
-            if db['restaurants'].find_one({'_id': _id}) == None:
+            restaurant = Restaurant(**db['restaurants'].find_one({'_id': _id}))
+            if restaurant == None:
                 return
-            id_google = db['restaurants'].find_one({'_id': _id})['id_google']
-            id_yelp = db['restaurants'].find_one({'_id': _id})['id_yelp']
-            reviews_yelp, reviews_google = self.get_reviews_from_google_yelp(id_google, id_yelp, just_new=True)
-            reviews_triplets = self.get_triplets_from_colab(reviews_yelp, reviews_google, db, id_google, id_yelp)
-            #schema collection reviews_google: {'id_google': String, 'id_review': String, 'review': String, 'triplets': Array}
-            #Just get the triplets arrays from db
-            reviews_triplets.extend([triplet['triplets'] for triplet in db['reviews_yelp'].find({'id_yelp': id_yelp})])
-            reviews_triplets.extend([triplet['triplets'] for triplet in db['reviews_google'].find({'id_google': id_google})])
-            # Clusterizar los tripletes
-            relevant_pairs = utilities.get_relevant_pairs(reviews_triplets)
+            reviews = self.get_reviews_from_google_yelp(restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor, True)
+            
+            if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
+                reviews_triplets = self.get_triplets_from_colab(self, db, reviews, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
+            reviews_triplets = self.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
+            triplets = []
+            for review_triplet in reviews_triplets:
+                triplets.extend(review_triplet['triplets'])
+
+            relevant_pairs = utilities.get_relevant_pairs(triplets)
             # Envíar al gpt-4
             generate_review = utilities.generate_review(relevant_pairs)
             db['restaurants'].update_one({'_id': _id}, 
                 {"$set": {'review': generate_review}},
                 {"$set": {'last_updated': datetime.datetime.now()}}, 
-                {"$set": {'data': utilities.from_triplets_to_db(reviews_triplets)}}
+                {"$set": {'data': utilities.from_triplets_to_db(triplets)}},
+                {"$set": {'relevant_pairs': relevant_pairs}}
             )
         except Exception as ex:
             raise Exception(ex)

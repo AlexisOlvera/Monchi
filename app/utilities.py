@@ -21,7 +21,7 @@ class utilities:
 
     @staticmethod
     def get_triplets(review : str):
-        url_ngrok = "http://c34c-34-32-174-35.ngrok-free.app"
+        url_ngrok = "http://95a0-104-199-217-86.ngrok-free.app"
         url_colab = url_ngrok+f"/api/predict?review='{review}'"
         response = requests.get(url_colab)
         return response.json()

@@ -166,6 +166,7 @@ function initBubblePlot(){
         y: y_aspects,
         mode: 'markers',
         marker: {
+            color: 'rgb(240, 62, 2)',
             size: size_aspects
         },
         text: text_aspects
@@ -176,7 +177,8 @@ function initBubblePlot(){
         y: y_opinions,
         mode: 'markers',
         marker: {
-            size: size_opinions
+            size: size_opinions,
+            color: 'rgb(24, 28, 245)'
         },
         text: text_opinions
     };

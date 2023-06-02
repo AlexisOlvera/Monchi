@@ -1,1 +1,1 @@
-var restaurant_list = ["Belmondo", "Carmela y Sal", "Contramar", "Dulce Patria", "Entremar", "Garum", "Lalo!", "Lardo", "Merotoro", "Nicos", "Porfirios", "Pujol", "Quintonil", "Rokai Ramen-Ya", "Sud 777"];
+var restaurant_list = ["Belmondo", "Carmela y Sal", "Contramar", "Don Goyo", "Dulce Patria", "Entremar", "Garum", "La Mansion Palmas", "Lalo!", "Lardo", "Merotoro", "Nicos claveria", "Porfirio's Masaryk ", "Pujol", "Quintonil", "Rokai Ramen-Ya", "Sud 777"];
