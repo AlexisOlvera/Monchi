@@ -1,4 +1,6 @@
 import datetime
+
+from bson import ObjectId
 from .entities.Restaurant import Restaurant
 import requests
 import googlemaps
@@ -267,13 +269,17 @@ class ModelRestaurant():
     @classmethod
     def update_reviews(self, db, _id):
         try:
-            restaurant = Restaurant(**db['restaurants'].find_one({'_id': _id}))
-            if restaurant == None:
-                return
-            reviews = self.get_reviews_from_google_yelp(restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor, True)
+            print(_id)
+            restaurant_db = db['restaurants'].find_one({'_id': ObjectId(_id)})
+            print(restaurant_db)
+            if restaurant_db == None:
+                return False
+            restaurant = Restaurant(**restaurant_db)
+            """reviews = self.get_reviews_from_google_yelp(restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor, True)
             
             if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
                 reviews_triplets = self.get_triplets_from_colab(self, db, reviews, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
+            """
             reviews_triplets = self.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
             triplets = []
             for review_triplet in reviews_triplets:
@@ -282,7 +288,7 @@ class ModelRestaurant():
             relevant_pairs = utilities.get_relevant_pairs(triplets)
             # Envíar al gpt-4
             generate_review = utilities.generate_review(relevant_pairs)
-            db['restaurants'].update_one({'_id': _id}, 
+            db['restaurants'].update_one({'_id': ObjectId(_id)}, 
                 {"$set": {'review': generate_review}},
                 {"$set": {'last_updated': datetime.datetime.now()}}, 
                 {"$set": {'data': utilities.from_triplets_to_db(triplets)}},
@@ -290,7 +296,7 @@ class ModelRestaurant():
             )
         except Exception as ex:
             raise Exception(ex)
-        
-    
+        return True
+
 
 
