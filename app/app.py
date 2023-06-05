@@ -16,17 +16,20 @@ client = MongoClient(MONGODB_CONNECTION_STRING)
 db = client['monchi']
 
 @app.route('/')
-def home():
+def index():
     return render_template("index.html")
 
 @app.route('/restaurants/<restaurant_name>')
-def index(restaurant_name):
-    print(restaurant_name)
+def get_restaurant(restaurant_name):
     restaurant = ModelRestaurant.find(db, restaurant_name)
-    print(restaurant)
     if restaurant != None:
-        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor))
-        print(reviews_triplets)
+        reviews_triplets = utilities.from_db_to_triplets_js(
+            ModelRestaurant.get_reviews_from_db(
+                db, restaurant.id_google, 
+                restaurant.id_yelp, 
+                restaurant.id_tripadvisor
+                )
+            )
         labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
         bubble_data = ModelRestaurant.get_data_of_bubble_plot(db, restaurant._id)
         return render_template("restaurant.html", 

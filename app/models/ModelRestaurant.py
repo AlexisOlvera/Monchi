@@ -213,28 +213,21 @@ class ModelRestaurant():
 
     @classmethod
     def save(self, db, name, id_google, id_yelp, id_tripadvisor):
-        #Obtener las reviews de google y yelp
+        # Obtener las reviews de google, yelp y tripadvisor
         reviews = self.get_reviews(self, id_google, id_yelp, id_tripadvisor)
-        for service, reviews_by_service in reviews.items():
-            print(service, '\n', '-'*50, '\n')
-            print(reviews_by_service)
-        #mandarlas al colab que regrese los tripletes
+        # Mandarlas al colab que regrese los tripletes
         if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
             reviews_triplets = self.get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor)
-        print("reviews_triplets\n")
-        print(reviews_triplets)
+        # Obtener los tripletes de la base de datos por si ya existen algunas anteriormente
         reviews_triplets = self.get_reviews_from_db(db, id_google, id_yelp, id_tripadvisor)
         triplets = []
         for review_triplet in reviews_triplets:
             triplets.extend(review_triplet['triplets'])
-
-        #print(triplets)
-        # Clusterizar los tripletes
+        # Clusterizar los tripletes y obtener los pares relevantes
         relevant_pairs = utilities.get_relevant_pairs(triplets)
-        print(relevant_pairs)
         # Envíar al gpt-4
         generated_review = utilities.generate_review(relevant_pairs)
-        print(generated_review)
+        # Guardar en la base de datos
         try:
             db['restaurants'].insert_one({
                 'name': name, 
@@ -246,7 +239,7 @@ class ModelRestaurant():
                 'relevant_pairs': relevant_pairs,
                 'last_updated': datetime.datetime.now()
             })
-            #find by id_google
+            #Hacer el embedding y reducción de dimensiones de los aspectos y opiniones a 2 dimensiones
             resturant = Restaurant(**db['restaurants'].find_one({'id_google': id_google}))
             self.save_data_of_bubble_plot(db, resturant)
         except Exception as ex:
@@ -269,17 +262,15 @@ class ModelRestaurant():
     @classmethod
     def update_reviews(self, db, _id):
         try:
-            print(_id)
             restaurant_db = db['restaurants'].find_one({'_id': ObjectId(_id)})
-            print(restaurant_db)
             if restaurant_db == None:
                 return False
             restaurant = Restaurant(**restaurant_db)
-            """reviews = self.get_reviews_from_google_yelp(restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor, True)
+            reviews = self.get_reviews_from_google_yelp(restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor, True)
             
             if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
                 reviews_triplets = self.get_triplets_from_colab(self, db, reviews, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
-            """
+            
             reviews_triplets = self.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor)
             triplets = []
             for review_triplet in reviews_triplets:
