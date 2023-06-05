@@ -8,7 +8,7 @@ from models.ModelRequest import ModelRequest
 from models.ModelUser import ModelUser
 
 app = Flask(__name__)
-app.secret_key = 'super secret key'
+app.secret_key = 'QKy3NzXLu2k3l1XD'
 #QKy3NzXLu2k3l1XD
 # Replace the following values with your MongoDB Atlas connection string
 MONGODB_CONNECTION_STRING = "mongodb+srv://monchi:QKy3NzXLu2k3l1XD@restaurants.svwsl9k.mongodb.net/?retryWrites=true&w=majority"
@@ -40,22 +40,6 @@ def index(restaurant_name):
     else:
         return render_template("restaurant_not_found.html", restaurant_name = restaurant_name)
     
-
-@app.route('/get_review/<place_id>')
-def get_review(place_id):
-    api_key = 'AIzaSyBcDJUy0pFP_bRlNgfW9f49q6hr1G56rfQ'
-    gmaps = googlemaps.Client(key=api_key)
-    place = gmaps.place(place_id, language='es', reviews_no_translations=True, reviews_sort='most_newest')
-
-    # Extract the review text for each review in the response
-    reviews = []
-    for review in place['result']['reviews']:
-        reviews.append(review['text'])
-
-    # Return the review text as a JSON response
-    return jsonify({'reviews': reviews})
-
-
 @app.route('/admin/restaurants', methods=['GET'])
 def update_restaurants():
     if 'username' not in session:
@@ -136,6 +120,14 @@ def logout():
     
     return redirect('/login')
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):  
+    return render_template('errors/500.html'), 500
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -12,7 +12,7 @@ def stopword_dict(stopwords_path):
             words = line.split()
             token = words[0].strip()
             # uncomment for generate_cp.txt
-            # token = token.replace('#', '')
+            token = token.replace('#', '')
             lemma = words[-1].strip()
             sw_dir[token] = lemma
     

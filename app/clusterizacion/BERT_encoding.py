@@ -4,42 +4,33 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.cluster import SpectralClustering
 from transformers import BertModel, BertTokenizer
 from sklearn.decomposition import PCA
+import csv
 
 def encoding(phrase_pairs):
     vectors = []
-    input_sentences = []
-    embeddings = None
-
     # Load BERT model pre-trained and tokenizer
     model_name = 'dccuchile/bert-base-spanish-wwm-cased'
     model = BertModel.from_pretrained(model_name, output_hidden_states=True)
     tokenizer = BertTokenizer.from_pretrained(model_name)
 
+    aspects = [pair[0] for pair in phrase_pairs]
 
+    # embedding_aspects.csv = cesped,"[0.2315973937511444, 0.467934787273407, ... ] \n liebre,"[0.6224402785301208, -0.03878629580140114, ...], ...  
+    # load the vectors of the aspects and if is not found, encode it
+    with open('embedding_aspects.csv', 'r') as f:
+        reader = csv.reader(f)
+        aspects_embbeding = dict(reader)
+        
+    for aspect in aspects:
+        if aspect in aspects_embbeding:
+            vectors.append(eval(aspects_embbeding[aspect]))
+        else:
+            encode_aspect = tokenizer(aspect, return_tensors="pt")
+            with torch.no_grad():
+                outputs = model(**encode_aspect)
+                vector = outputs[2][-1][0][0]
+                vectors.append(vector.tolist())  
 
-    for pair in phrase_pairs:
-        input_sentences.append(pair[0])
-
-    for pair in phrase_pairs:
-        #tokinize just the pair[0]
-        encode_aspect = tokenizer(pair[0], return_tensors="pt")
-        with torch.no_grad():
-            outputs = model(**encode_aspect)
-            vector = outputs[2][-1][0][0] # Tomar la última capa oculta de BERT
-            vectors.append(vector.tolist())
-        encoded_inputs = tokenizer(input_sentences, padding=True, truncation=True, return_tensors="pt")
-        with torch.no_grad():
-            outputs = model(**encoded_inputs)
-            embeddings = outputs.last_hidden_state[:, 0, :].numpy()
-
-    similarity_matrix = cosine_similarity(embeddings)
-    n_clusters = 3
-    clusterer = SpectralClustering(n_clusters=n_clusters, affinity="precomputed")
-    labels = clusterer.fit_predict(similarity_matrix)
-    clusters_spectral = [[None]]*3
-    for i, label in enumerate(labels):
-        clusters_spectral[label].append(input_sentences[i])
-    
     return vectors
 
 def encode_sentence(sentence: str):

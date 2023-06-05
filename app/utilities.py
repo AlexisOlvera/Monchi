@@ -21,7 +21,7 @@ class utilities:
 
     @staticmethod
     def get_triplets(review : str):
-        url_ngrok = "http://95a0-104-199-217-86.ngrok-free.app"
+        url_ngrok = "http://f9a9-34-91-182-243.ngrok-free.app"
         url_colab = url_ngrok+f"/api/predict?review='{review}'"
         response = requests.get(url_colab)
         return response.json()
@@ -30,15 +30,8 @@ class utilities:
     @staticmethod
     def get_relevant_pairs(triplets : list):
         phrase_pairs = [(triplet['aspect'], triplet['opinion']) for triplet in triplets]
-        with open('phrase_pairs.json', 'w') as file:
-            json.dump(phrase_pairs, file)
         relevant_pairs = get_relevant_pairs(phrase_pairs)
-        with open('relevant_aspects.json', 'w') as file:
-            json.dump(relevant_pairs, file)
-        top_three = []
-        for clusters in relevant_pairs:
-            top_three.extend(clusters[:3])
-        return top_three
+        return relevant_pairs
     
     @staticmethod
     def generate_review(relevant_pairs : list):
