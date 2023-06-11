@@ -4,7 +4,12 @@ Actualizar Restaurante
 {% endblock %}
 {% block body %}
 {% include './nav.html' %}
-<div class="container mt-4">
+<div class="mt-5">_</div>
+
+<div class="container mt-5">
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <a class="btn btn-warning btn-lg" href="/admin/new_restaurant" role="button">Nuevo restaurante</a>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -19,12 +24,8 @@ Actualizar Restaurante
                 <td>{{restaurant.name}}</td>
                 <td>{{restaurant.last_updated}}</td>
                 <td>
-                    <a href="/restaurants/{{restaurant._id}}/edit" class="btn btn-primary">Editar</a>
                     <a href="/admin/update_reviews/{{restaurant._id}}" class="btn btn-success">Actualizar</a>
-                    <form action="/restaurants/{{restaurant._id}}" method="POST" style="display: inline-block">
-                        <input type="hidden" name="_method" value="DELETE">
-                        <button class="btn btn-danger">Eliminar</button>
-                    </form>
+                    <a href="/admin/delete/{{restaurant.name}}" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
             {% endfor %}

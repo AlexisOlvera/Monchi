@@ -169,7 +169,8 @@ function initBubblePlot(){
             color: 'rgb(240, 62, 2)',
             size: size_aspects
         },
-        text: text_aspects
+        text: text_aspects, 
+        name: "Aspectos"
     };
     size_opinions = size_opinions.map(x => x * 10);
     let trace_opinions = {
@@ -180,7 +181,8 @@ function initBubblePlot(){
             size: size_opinions,
             color: 'rgb(24, 28, 245)'
         },
-        text: text_opinions
+        text: text_opinions, 
+        name: "Opiniones"
     };
 
 

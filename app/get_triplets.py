@@ -45,6 +45,7 @@ def lda(topics):
 def get_relevant_pairs(phrase_pairs):
     stopwords_root = '../generate_cp.txt'
     k = 3
+
     # K-means
     # Normalize phrase pairs
     phrase_pairs = clean(phrase_pairs, stopwords_root)
@@ -53,7 +54,7 @@ def get_relevant_pairs(phrase_pairs):
         if dict_aspect_opinion.get(pair[0]) == None:
             dict_aspect_opinion[pair[0]] = []
         dict_aspect_opinion[pair[0]].append(pair[1])
-    # Encode phrase pairs
+    # Train model and get clusters
     vectors = encoding(phrase_pairs)
     # Clusterizar los vectores utilizando KMeans
     kmeans = KMeans(n_clusters=k, random_state=0).fit(vectors)

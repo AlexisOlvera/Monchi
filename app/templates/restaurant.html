@@ -29,7 +29,11 @@ Monchi
           </div>
         </div> 
         <div class="row mt-4"  style="height: max-content;">
-          <div class="col-8" id ="chartDiv"> </div>  
+          <div class="col-8"> 
+            <div id ="chartDiv"></div>
+            Al interior de la gráfica, se observan los aspectos identificados de las reseñas recabadas, 
+            mientras que al exterior se observan las opiniones, correspondientes a sus respectivos aspectos
+          </div>  
           <div class="col-4">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -62,9 +66,14 @@ Monchi
         </div>
         <div class="row mt-4">
           <div class="col-6" id ="bubblePlot"> </div>
-          <div class="col-6" id ="indicatorPlot"> </div>
+          <div class="col-6">
+            <div id ="indicatorPlot"> </div>
+            Del total de tripletes obtenidos de las reseñas de este restaurante, 
+            la cantidad mostrada en verde fueron clasificados con sentimiento positivo (‘POS’) 
+            mientras que la cantidad en rojo fueron clasificados con sentimiento negativo (‘NEG’).
+          </div>
         </div>
-        <div class="row">
+      <div class="row mt-5">
       <div class="col-4">
         <div class="list-group overflow-auto" id="reviews-list-tab" role="tablist">
         </div>

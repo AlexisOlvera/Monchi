@@ -16,20 +16,17 @@ client = MongoClient(MONGODB_CONNECTION_STRING)
 db = client['monchi']
 
 @app.route('/')
-def index():
+def home():
     return render_template("index.html")
 
 @app.route('/restaurants/<restaurant_name>')
-def get_restaurant(restaurant_name):
+def index(restaurant_name):
+    print(restaurant_name)
     restaurant = ModelRestaurant.find(db, restaurant_name)
+    print(restaurant)
     if restaurant != None:
-        reviews_triplets = utilities.from_db_to_triplets_js(
-            ModelRestaurant.get_reviews_from_db(
-                db, restaurant.id_google, 
-                restaurant.id_yelp, 
-                restaurant.id_tripadvisor
-                )
-            )
+        reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor))
+        print(reviews_triplets)
         labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
         bubble_data = ModelRestaurant.get_data_of_bubble_plot(db, restaurant._id)
         return render_template("restaurant.html", 
@@ -71,23 +68,25 @@ def save_restaurant():
         id_yelp = ''
         id_tripadvisor = ''
     ModelRestaurant.save(db, restaurant_name, id_google, id_yelp, id_tripadvisor)
-    return redirect('/admin/new_restaurant')
-
-@app.route('/admin/update_list_fuse', methods=['GET'])
-def update_list_fuse():
-    if 'username' not in session:
-        return redirect('/admin/login')
     list_restaurants = db['restaurants'].distinct('name', {})
     with open('static/js/fuse_list.js', 'w+') as file:
         file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
-    return jsonify({'status': 'ok'})
-    
+    return redirect('/admin/new_restaurant')
+
 @app.route('/admin/update_reviews/<_id>', methods=['GET'])
 def update_reviews(_id):
     if 'username' not in session:
         return redirect('/admin/login')
     ModelRestaurant.update_reviews(db, _id)
-    redirect('/admin/restaurants')
+    return redirect('/admin/restaurants')
+
+@app.route('/admin/delete/<name_restaurant>', methods=['GET'])
+def delete_restaurant(name_restaurant):
+    if 'username' not in session:
+        return redirect('/admin/login')
+    print(name_restaurant)
+    ModelRestaurant.delete(db, name_restaurant)
+    return redirect('/admin/restaurants')
 
 @app.route('/restaurants/request', methods=['POST', 'GET'])
 def request_restaurants():
