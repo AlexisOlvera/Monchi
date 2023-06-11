@@ -1,8 +1,11 @@
-flask = 2.2.3
-pymongo = 4.3.3
-googlemaps = 4.10.0
+flask
+pymongo
+googlemaps
 scikit-learn
 gensim
 pyLDAvis
 matplotlib
 openai
+requests
+torch
+transformers

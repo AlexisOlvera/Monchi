@@ -46,7 +46,7 @@ def encode_sentence(sentence: str):
         vector = outputs[2][-1][0][0] # Tomar la última capa oculta de BERT
         return vector.tolist()
 
-def enconde_list_of_sentences(sentences: list[str]):
+def enconde_list_of_sentences(sentences):
     # Load BERT model pre-trained and tokenizer
     encoded_sentences = []
     model_name = 'dccuchile/bert-base-spanish-wwm-cased'
