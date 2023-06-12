@@ -215,14 +215,9 @@ class ModelRestaurant():
     def save(self, db, name, id_google, id_yelp, id_tripadvisor):
         #Obtener las reviews de google y yelp
         reviews = self.get_reviews(self, id_google, id_yelp, id_tripadvisor)
-        for service, reviews_by_service in reviews.items():
-            print(service, '\n', '-'*50, '\n')
-            print(reviews_by_service)
         #mandarlas al colab que regrese los tripletes
         if(not(reviews['yelp'] == [] and reviews['google'] == [] and reviews['tripadvisor'] == [])):
             reviews_triplets = self.get_triplets_from_colab(self, db, reviews, id_google, id_yelp, id_tripadvisor)
-        print("reviews_triplets\n")
-        print(reviews_triplets)
         reviews_triplets = self.get_reviews_from_db(db, id_google, id_yelp, id_tripadvisor)
         triplets = []
         for review_triplet in reviews_triplets:

@@ -28,14 +28,12 @@ def index(restaurant_name):
         reviews_triplets = utilities.from_db_to_triplets_js(ModelRestaurant.get_reviews_from_db(db, restaurant.id_google, restaurant.id_yelp, restaurant.id_tripadvisor))
         print(reviews_triplets)
         labels, parents, values = utilities.data_to_list_ploty(restaurant.data)
-        bubble_data = ModelRestaurant.get_data_of_bubble_plot(db, restaurant._id)
         return render_template("restaurant.html", 
                             restaurant = restaurant,
                             labels = labels,
                             parents = parents,
                             values = values,
-                            reviews_triplets = reviews_triplets,
-                            bubble_data = bubble_data
+                            reviews_triplets = reviews_triplets
                         )
     else:
         return render_template("restaurant_not_found.html", restaurant_name = restaurant_name)
@@ -122,6 +120,14 @@ def logout():
     
     return redirect('/login')
 
+@app.route('/admin/update_list_fuse', methods=['GET'])
+def update_list_fuse():
+    if 'username' not in session:
+        return redirect('/admin/login')
+    list_restaurants = db['restaurants'].distinct('name', {})
+    with open('static/js/fuse_list.js', 'w+') as file:
+        file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
+    return jsonify({'status': 'ok'})
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -133,3 +139,4 @@ def internal_server_error(e):
 
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const num_reviews = document.getElementById('num_reviews');
     num_reviews.innerHTML = reviews_triplets.length;
     console.log('DOM loaded');
-    initBubblePlot();
     initIndicatorPlot();
     console.log(reviews_triplets);
     const reviewsDiv = document.getElementById('reviewsDiv');
@@ -159,45 +158,6 @@ function initMap() {
 
 window.initMap = initMap;
 
-function initBubblePlot(){
-    size_aspects = size_aspects.map(x => x * 10);
-    let trace_aspects = {
-        x: x_aspects,
-        y: y_aspects,
-        mode: 'markers',
-        marker: {
-            color: 'rgb(240, 62, 2)',
-            size: size_aspects
-        },
-        text: text_aspects, 
-        name: "Aspectos"
-    };
-    size_opinions = size_opinions.map(x => x * 10);
-    let trace_opinions = {
-        x: x_opinions,
-        y: y_opinions,
-        mode: 'markers',
-        marker: {
-            size: size_opinions,
-            color: 'rgb(24, 28, 245)'
-        },
-        text: text_opinions, 
-        name: "Opiniones"
-    };
-
-
-    let data = [trace_aspects, trace_opinions];
-
-    let layout = {
-        title: 'Aspectos y opiniones',
-        showlegend: false,
-        height: 600,
-        width: 600
-    };
-
-    Plotly.newPlot('bubblePlot', data, layout);
-}
-
 function count_triplets_pos_neg(){
     num_positivos = 0;
     num_negativos = 0;
@@ -225,7 +185,10 @@ function initIndicatorPlot(){
           mode: "gauge+number+delta",
           delta: { reference: num_positivos+num_negativos},
           gauge: { axis: { visible: true, range: [0, num_positivos+num_negativos] } },
-          domain: { row: 0, column: 0 }
+          domain: { row: 0, column: 0 }, 
+          subtitle: 'Del total de tripletes obtenidos de las reseñas de este restaurante,'+
+          'la cantidad mostrada en verde fueron clasificados con sentimiento positivo ("POS")'+
+          'mientras que la cantidad en rojo fueron clasificados con sentimiento negativo ("NEG").'
         },
     ];
 

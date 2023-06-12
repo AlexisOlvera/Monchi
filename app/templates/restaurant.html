@@ -14,27 +14,28 @@ Monchi
           <div class="col-8">
             <h1>{{restaurant.name}}</h1>
             <p style="text-align: justify">
-              {{restaurant.review}}
+              {{restaurant.formated_review() | safe}}
             </p>
             <hr>
-            Esta reseña fue creada a partir de la información de <span id = "num_reviews"></span> reseñas.      
+            <b>MONCHI</b> creó esta reseña a partir de la información de <span id = "num_reviews"></span> reseñas.      
           </div>
           <div class="col-4">
             <h3><span class="badge bg-danger">Opiniones mas relevantes</span></h3>
             <ul class="list-group list-group-flush">
               {% for relevan_pair  in restaurant.relevant_pairs %}
-              <li class="list-group-item">{{relevan_pair}}</li>
+              <li class="list-group-item">{{relevan_pair[0]}} {{relevan_pair[1]}}</li>
               {% endfor %}
             </ul>
           </div>
         </div> 
         <div class="row mt-4"  style="height: max-content;">
-          <div class="col-8"> 
-            <div id ="chartDiv"></div>
-            Al interior de la gráfica, se observan los aspectos identificados de las reseñas recabadas, 
-            mientras que al exterior se observan las opiniones, correspondientes a sus respectivos aspectos
+          <div class="col-7"> 
+            <div id ="indicatorPlot"> </div>
+            Del total de tripletes obtenidos de las reseñas de este restaurante,
+            la cantidad mostrada en verde fueron clasificados con sentimiento positivo (‘POS’)
+            mientras que la cantidad en rojo fueron clasificados con sentimiento negativo (‘NEG’).
           </div>  
-          <div class="col-4">
+          <div class="col-5">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                   <button class="nav-link active" id="nav-map-tab-tab" data-bs-toggle="tab" data-bs-target="#nav-map-tab" type="button" role="tab" aria-controls="nav-map-tab" aria-selected="true">Mapa</button>
@@ -64,15 +65,19 @@ Monchi
           </div>
             
         </div>
-        <div class="row mt-4">
-          <div class="col-6" id ="bubblePlot"> </div>
-          <div class="col-6">
-            <div id ="indicatorPlot"> </div>
-            Del total de tripletes obtenidos de las reseñas de este restaurante, 
-            la cantidad mostrada en verde fueron clasificados con sentimiento positivo (‘POS’) 
-            mientras que la cantidad en rojo fueron clasificados con sentimiento negativo (‘NEG’).
+        <div class="row">
+          <div class="col-12">
+            <div id="chartDiv"></div>
+            <div class="card col-8 mx-auto"> <!-- Se agregó la clase "mx-auto" -->
+              <div class="card-body">
+                <p class="card-text">
+                  Al interior de la gráfica, se observan los aspectos identificados de las reseñas recabadas, 
+                  mientras que al exterior se observan las opiniones, correspondientes a sus respectivos aspectos
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </div>        
       <div class="row mt-5">
       <div class="col-4">
         <div class="list-group overflow-auto" id="reviews-list-tab" role="tablist">
@@ -134,14 +139,6 @@ Monchi
     var id_google = '{{restaurant.id_google}}';
     var id_yelp = '{{restaurant.id_yelp}}';
     var id_trip = '{{restaurant.id_trip}}';
-    var x_aspects = {{bubble_data['aspects']['x'] | safe}};
-    var y_aspects = {{bubble_data['aspects']['y'] | safe}};
-    var size_aspects = {{(bubble_data['aspects']['size'])| safe}};
-    var text_aspects = {{bubble_data['aspects']['text'] | safe}};
-    var x_opinions = {{bubble_data['opinions']['x'] | safe}};
-    var y_opinions = {{bubble_data['opinions']['y'] | safe}};
-    var size_opinions = {{(bubble_data['opinions']['size']) | safe}};
-    var text_opinions = {{bubble_data['opinions']['text'] | safe}};
     var data = [
       {
         "type": "sunburst",
