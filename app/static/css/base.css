@@ -1697,3 +1697,24 @@ section {
   width: 100%;
   height: 100%;
 }
+
+.image-container-monchi {
+  height: 350px;
+  border: 4px solid red;
+  border-radius: 47%;
+  overflow: hidden;
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.image-container-monchi img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.image-text {
+  font-weight: bold;
+}

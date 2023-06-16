@@ -1,0 +1,129 @@
+{% extends './base.html' %}
+{% block title %}
+Monchi
+{% endblock %}
+
+{% block body %}
+{% include './nav.html' %}
+  <main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <div class="breadcrumbs">
+      <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>¿Quiénes somos?</h2>
+          <!-- <ol>
+            <li><a href="index.html">Home</a></li>
+            <li>Sample Inner Page</li>
+          </ol> -->
+        </div>
+
+      </div>
+    </div><!-- End Breadcrumbs -->
+
+    <!-- <section class="sample-page">
+      <div class="container" data-aos="fade-up">
+        <h1>Conoce al equipo</h1>        
+      </div>
+    </section> -->
+    <section class="sample-page">
+      <div class="container" data-aos="fade-up">
+        <h1>Conoce al equipo</h1>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="image-container-monchi">
+              <img src="../static/img/dibujoalx.PNG" alt="Image 1">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="image-container-monchi">
+              <img src="../static/img/dibujofabi.PNG" alt="Image 2">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="image-container-monchi">
+              <img src="../static/img/dibujoign.PNG" alt="Image 3">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="image-container-monchi">
+              <img src="../static/img/dibujomonchibot.PNG" alt="Image 4">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3" style="text-align: center;">
+            <div class="image-text"><h3>Alexis</h3></div>
+          </div>
+          <div class="col-md-3" style="text-align: center;">
+            <div class="image-text"><h3>Fabi</h3></div>
+          </div>
+          <div class="col-md-3" style="text-align: center;">
+            <div class="image-text"><h3>Ignacio</h3></div>
+          </div>
+          <div class="col-md-3" style="text-align: center;">
+            <div class="image-text"><h3>MONCHI</h3></div>
+          </div>
+        </div>
+        <div class="row">
+          <br>&nbsp;<br>
+          <h4 style="text-align: justify;">
+             Somos tres estudiantes de ingeniería con un amor compartido por dos cosas: la tecnología y
+             la comida. Nos hemos unido para explorar la intersección entre estas dos pasiones y llevar la experiencia culinaria a 
+             un nuevo nivel. A través de nuestro profundo interés en la inteligencia artificial y la innovación tecnológica,
+              nos esforzamos por descubrir y crear soluciones creativas que mejoren la forma en que interactuamos con la comida. 
+           </h4>
+        </div>
+      </div>
+    </section>
+    
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+
+    <div class="container">
+      <div class="row gy-3">
+        
+        <div class="col-lg-3 col-md-6 d-flex">
+          <i class="bi bi-geo-alt icon"></i>
+          <div>
+            <h4>Dirección</h4>
+            <p>
+              Juarez 52 <br>
+              San Álvaro, Azcapotzalco, CDMX<br>
+            </p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 footer-links d-flex">
+          <i class="bi bi-telephone icon"></i>
+          <div>
+            <h4>Contacto</h4>
+            <p>
+              <strong>Phone:</strong> 55 6915 6299<br>
+              <strong>Email:</strong> monchi@gmail.com<br>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>MONCHI</span></strong>. All Rights Reserved
+      </div>
+    </div>
+
+  </footer><!-- End Footer -->
+  <!-- End Footer -->
+
+  <a href="#" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <div id="preloader"></div>
+  {% block scripts %}
+  <script src="../static/js/index.js"></script>
+  {% endblock %}
+  {% endblock %}

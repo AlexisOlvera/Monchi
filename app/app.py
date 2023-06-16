@@ -129,6 +129,16 @@ def update_list_fuse():
         file.write(f"var restaurant_list = {json.dumps(list_restaurants)};")
     return jsonify({'status': 'ok'})
 
+@app.route('/quienessomos')
+def quienessomos():
+    return render_template('quienessomos.html')
+
+@app.route('/restaurants', methods=['GET'])
+def list_restaurants():
+    restaurants = ModelRestaurant.find_all(db)
+    n_restaurants = len(restaurants)
+    return render_template("restaurants.html", restaurants = restaurants, n_restaurants = n_restaurants)
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('errors/404.html'), 404

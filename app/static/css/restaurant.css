@@ -1,14 +1,15 @@
 .aspect {
-    background-color: #ff9900;
+    background-color: #f8a933;
 }
 
 .opinion {
-    background-color: #3399ff;
+    background-color: #61adf8;
 }
 
 .highlight {
     font-weight: bold;
     text-decoration: underline;
+    font-size: large;
 }
 
 #reviews-list-tab{
